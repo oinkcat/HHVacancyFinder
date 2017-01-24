@@ -33,7 +33,7 @@ namespace HHVacancies
         }
 
         // Сохранить данные о найденных вакансиях
-        private void saveData()
+        private void SaveData()
         {
             var dlg = new SaveFileDialog()
             {
@@ -60,7 +60,7 @@ namespace HHVacancies
         }
 
         // Показать результат
-        private void showData(IEnumerable<Vacancy> vacancies)
+        private void ShowData(IEnumerable<Vacancy> vacancies)
         {
             grdTop.IsEnabled = true;
             pbFindProgres.Visibility = Visibility.Collapsed;
@@ -82,7 +82,7 @@ namespace HHVacancies
         }
 
         // Начать поиск вакансий
-        private async void startSearchAsync()
+        private async void StartSearchAsync()
         {
             grdTop.IsEnabled = false;
             exportBlock.Visibility = Visibility.Hidden;
@@ -96,14 +96,14 @@ namespace HHVacancies
             string encodedName = Uri.EscapeDataString(tbVacancyName.Text);
 
             await finder.StartAsync(encodedName);
-            showData(finder.Vacancies);
+            ShowData(finder.Vacancies);
         }
 
         private void btnFind_Click(object sender, RoutedEventArgs e)
         {
             if(tbVacancyName.Text.Trim().Length > 0)
             {
-                startSearchAsync();
+                StartSearchAsync();
             }
             else
             {
@@ -115,7 +115,7 @@ namespace HHVacancies
 
         private void Hyperlink_Click(object sender, RoutedEventArgs e)
         {
-            saveData();
+            SaveData();
         }
 
         private void tbVacancyName_KeyUp(object sender, KeyEventArgs e)

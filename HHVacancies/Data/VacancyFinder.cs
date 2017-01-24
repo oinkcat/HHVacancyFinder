@@ -76,7 +76,7 @@ namespace HHVacancies.Data
 
         // Разобрать информацию о вакансиях на странице
         // TODO: Парсинг на основе конфигурации
-        private void parseVacanciesInfo(HtmlDocument doc)
+        private void ParseVacanciesInfo(HtmlDocument doc)
         {
             HtmlNode root = doc.DocumentNode;
 
@@ -89,7 +89,7 @@ namespace HHVacancies.Data
                 pagesCount = (int)Math.Ceiling((double)totalVacancies / ItemsPerPage);
             }
 
-            // Парсинг стараницы
+            // Парсинг страницы
             var infos = root.SelectNodes(ItemElem);
             if (infos == null) { return; }
 
@@ -143,7 +143,7 @@ namespace HHVacancies.Data
                     string url = buildUrl(vacancyName, p);
                     HtmlWeb webUtil = new HtmlWeb { OverrideEncoding = Encoding.UTF8 };
                     HtmlDocument loadedDocument = webUtil.Load(url);
-                    parseVacanciesInfo(loadedDocument);
+                    ParseVacanciesInfo(loadedDocument);
                     p++;
 
                     if (ProgressChanged != null)

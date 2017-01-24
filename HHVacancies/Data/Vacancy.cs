@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HHVacancies.Data
 {
@@ -30,5 +26,10 @@ namespace HHVacancies.Data
         /// Заралата
         /// </summary>
         public int BaseSalary { get; set; }
+
+        /// <summary>
+        /// URL страницы информации на сайте
+        /// </summary>
+        public string Url { get; set; }
     }
 }
