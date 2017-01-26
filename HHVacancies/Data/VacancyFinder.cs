@@ -48,6 +48,11 @@ namespace HHVacancies.Data
         private const string ItemElem = "//*/div[starts-with(@class, " +
                                         "'search-result-description__item')]";
 
+        // Значения атрибутов элементов информации о вакансиях
+        private const string TitleValue = "vacancy-serp__vacancy-title";
+        private const string CompanyValue = "vacancy-serp__vacancy-employer";
+        private const string MetroValue = "metro-station";
+
         // Найденные в настоящее время какансии
         private List<Vacancy> foundVacancies;
 
@@ -62,7 +67,7 @@ namespace HHVacancies.Data
         /// <summary>
         /// Выдать список найденных вакансий
         /// </summary>
-        public IEnumerable<Vacancy> Vacancies
+        public IList<Vacancy> Vacancies
         {
             get { return this.foundVacancies; }
         }
@@ -83,7 +88,12 @@ namespace HHVacancies.Data
             // Узнать число страниц, если в первый раз
             if(pagesCount == 0)
             {
-                string countValue = root.SelectSingleNode(TotalElem).InnerText;
+                var totalPagesElem = root.SelectSingleNode(TotalElem);
+                // Если пагинатора на странице нет - результаты не найдены
+                if (totalPagesElem == null)
+                    return;
+
+                string countValue = totalPagesElem.InnerText;
                 string valueWOSpaces = countValue.Replace(((char)160).ToString(), String.Empty);
                 int totalVacancies = int.Parse(valueWOSpaces.Split(' ')[1]);
                 pagesCount = (int)Math.Ceiling((double)totalVacancies / ItemsPerPage);
@@ -106,19 +116,20 @@ namespace HHVacancies.Data
 
                 try
                 {
-                    string name = infoNode.Descendants("a").First(n =>
-                        n.Attributes["data-qa"].Value == "vacancy-serp__vacancy-title").InnerText;
+                    var titleLink = infoNode.Descendants("a").First(n =>
+                        n.Attributes["data-qa"].Value == TitleValue);
                     string company = infoNode.Descendants("a").First(n =>
-                        n.Attributes["data-qa"].Value == "vacancy-serp__vacancy-employer").InnerText;
+                        n.Attributes["data-qa"].Value == CompanyValue).InnerText;
                     var hnMetro = infoNode.Descendants("span").FirstOrDefault(n => 
-                        n.Attributes["class"].Value == "metro-station");
+                        n.Attributes["class"].Value == MetroValue);
 
                     foundVacancies.Add(new Vacancy
                     {
                         BaseSalary = int.Parse(hnSalary.Attributes["content"].Value),
-                        Name = name,
-                        Company = company,
-                        MetroStation = hnMetro != null ? hnMetro.InnerText : null
+                        Name = titleLink.InnerText.Trim(),
+                        Company = company.Trim(),
+                        MetroStation = hnMetro != null ? hnMetro.InnerText : null,
+                        Url = titleLink.Attributes["href"].Value
                     });
                 }
                 catch

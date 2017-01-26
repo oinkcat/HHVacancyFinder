@@ -1,19 +1,13 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Diagnostics;
 
-using System.IO;
 using HHVacancies.Data;
 using Microsoft.Win32;
 
@@ -60,7 +54,7 @@ namespace HHVacancies
         }
 
         // Показать результат
-        private void ShowData(IEnumerable<Vacancy> vacancies)
+        private void ShowData(IList<Vacancy> vacancies)
         {
             grdTop.IsEnabled = true;
             pbFindProgres.Visibility = Visibility.Collapsed;
@@ -68,10 +62,19 @@ namespace HHVacancies
 
             // Отображение информации и статистика
             lbInfo.ItemsSource = vacancies;
-            double avgSalary = Math.Round(vacancies.Average(item => item.BaseSalary), 2);
-            lblStatus.Content = String.Format(
-                "Готово. Всего: {0}, средняя зарплата: {1:C}", 
-                vacancies.Count(), avgSalary);
+            if(vacancies.Count > 0)
+            {
+                double avgSalary = vacancies.Average(item => item.BaseSalary);
+                lblStatus.Content = String.Format(
+                    "Готово. Всего: {0}, средняя зарплата: {1:C}", 
+                    vacancies.Count(), Math.Round(avgSalary, 2));
+                exportBlock.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                lblStatus.Content = "Готово. Ничего не найдено";
+                exportBlock.Visibility = Visibility.Hidden;
+            }
         }
 
         // Показать прогресс операции
@@ -124,6 +127,21 @@ namespace HHVacancies
             {
                 btnFind_Click(sender, e);
             }
+        }
+
+        private void ItemDoubleClicked(object sender, MouseButtonEventArgs e)
+        {
+            var selectedItem = sender as ListViewItem;
+            var infoUrl = (selectedItem.Content as Vacancy).Url;
+            
+            // Открыть ссылку на информацию о вакансии в браузере
+            var browserStartInfo = new ProcessStartInfo
+            {
+                UseShellExecute = true,
+                Verb = "Open",
+                FileName = infoUrl
+            };
+            Process.Start(browserStartInfo);
         }
     }
 }
