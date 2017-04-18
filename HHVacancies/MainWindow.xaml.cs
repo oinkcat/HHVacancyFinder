@@ -20,11 +20,14 @@ namespace HHVacancies
     {
         private VacancyFinder finder;
 
-        public MainWindow()
-        {
-            InitializeComponent();
-            tbVacancyName.Focus();
-        }
+        // Текущий поисковый запрос
+        private string currentQuery;
+
+        // Средняя заралата по текущему запросу
+        private double currentAvgSalary;
+
+        // Выбранные вакансии для сравнения
+        private List<Tuple<string, double>> selectedVacancies;
 
         // Сохранить данные о найденных вакансиях
         private void SaveData()
@@ -64,10 +67,10 @@ namespace HHVacancies
             lbInfo.ItemsSource = vacancies;
             if(vacancies.Count > 0)
             {
-                double avgSalary = vacancies.Average(item => item.BaseSalary);
+                currentAvgSalary = vacancies.Average(item => item.BaseSalary);
                 lblStatus.Content = String.Format(
                     "Готово. Всего: {0}, средняя зарплата: {1:C}", 
-                    vacancies.Count(), Math.Round(avgSalary, 2));
+                    vacancies.Count(), Math.Round(currentAvgSalary, 2));
                 exportBlock.Visibility = Visibility.Visible;
             }
             else
@@ -94,12 +97,29 @@ namespace HHVacancies
             pbFindProgres.Visibility = Visibility.Visible;
 
             finder = new VacancyFinder();
-            finder.ProgressChanged += (s, e) => Dispatcher.Invoke(() =>
-                showProgress(e.Value, e.Maximum));
-            string encodedName = Uri.EscapeDataString(tbVacancyName.Text);
+            finder.ProgressChanged += (s, e) => {
+                Dispatcher.Invoke(() => showProgress(e.Value, e.Maximum));
+            };
+
+            currentQuery = tbVacancyName.Text;
+            string encodedName = Uri.EscapeDataString(currentQuery);
 
             await finder.StartAsync(encodedName);
             ShowData(finder.Vacancies);
+        }
+
+        private void CompareLink_Click(object sender, RoutedEventArgs e)
+        {
+            var vacancyAvgItem = Tuple.Create(currentQuery, currentAvgSalary);
+            selectedVacancies.Add(vacancyAvgItem);
+            selectedVacancies.Sort(new Comparison<Tuple<string, double>>((i1, i2) => {
+                return i2.Item2.CompareTo(i1.Item2);
+            }));
+        }
+
+        private void ExportLink_Click(object sender, RoutedEventArgs e)
+        {
+            SaveData();
         }
 
         private void btnFind_Click(object sender, RoutedEventArgs e)
@@ -116,11 +136,6 @@ namespace HHVacancies
             }
         }
 
-        private void Hyperlink_Click(object sender, RoutedEventArgs e)
-        {
-            SaveData();
-        }
-
         private void tbVacancyName_KeyUp(object sender, KeyEventArgs e)
         {
             if(e.Key == Key.Enter)
@@ -129,6 +144,7 @@ namespace HHVacancies
             }
         }
 
+        // Двойной щелчок открывает ссылку на вакансию в браузере
         private void ItemDoubleClicked(object sender, MouseButtonEventArgs e)
         {
             var selectedItem = sender as ListViewItem;
@@ -142,6 +158,15 @@ namespace HHVacancies
                 FileName = infoUrl
             };
             Process.Start(browserStartInfo);
+        }
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            tbVacancyName.Focus();
+
+            selectedVacancies = new List<Tuple<string, double>>();
+            ComparsionList.ItemsSource = selectedVacancies;
         }
     }
 }

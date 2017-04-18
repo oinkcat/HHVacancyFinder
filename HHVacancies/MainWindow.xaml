@@ -4,51 +4,77 @@
         Title="Поиск вакансий с зарплатами" Height="550" Width="750"
         WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize"
         Icon="Resources/vacancy.ico">
-    
+
     <Window.Resources>
         <Style x:Key="ClickableItem" TargetType="{x:Type ListViewItem}">
             <EventSetter Event="MouseDoubleClick" Handler="ItemDoubleClicked" />
         </Style>
     </Window.Resources>
     
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="40" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="30" />
-        </Grid.RowDefinitions>
+    <TabControl>
+        <TabItem Header="Поиск">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="30" />
+                </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,7" Name="grdTop">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="160" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Content="Название/ключевые слова:" />
-            <TextBox Grid.Column="1" Name="tbVacancyName" Margin="10, 0" Width="480"
+                <Grid Grid.Row="0" Margin="0,7" Name="grdTop">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="160" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Название/ключевые слова:" />
+                    <TextBox Grid.Column="1" Name="tbVacancyName" Margin="10, 0" Width="470"
                      KeyUp="tbVacancyName_KeyUp" 
                      VerticalContentAlignment="Center" HorizontalAlignment="Stretch" />
-            <Button Grid.Column="2" Name="btnFind" Content="Найти"
+                    <Button Grid.Column="2" Name="btnFind" Content="Найти"
                     Padding="10, 0" Margin="0,0,15,0" Click="btnFind_Click" />
-        </Grid>
+                </Grid>
 
-        <ListView Grid.Row="1" Name="lbInfo" ItemContainerStyle="{StaticResource ClickableItem}">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Должность" Width="250" DisplayMemberBinding="{Binding Name}" />
-                    <GridViewColumn Header="Организация" Width="250" DisplayMemberBinding="{Binding Company}" />
-                    <GridViewColumn Header="Метро" Width="120" DisplayMemberBinding="{Binding MetroStation}" />
-                    <GridViewColumn Header="Зарплата" Width="80" DisplayMemberBinding="{Binding BaseSalary, StringFormat=C, ConverterCulture=RU}" />
-                </GridView>
-            </ListView.View>
-        </ListView>
+                <ListView Grid.Row="1" Name="lbInfo" ItemContainerStyle="{StaticResource ClickableItem}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Должность" Width="250" DisplayMemberBinding="{Binding Name}" />
+                            <GridViewColumn Header="Организация" Width="250" DisplayMemberBinding="{Binding Company}" />
+                            <GridViewColumn Header="Метро" Width="120" DisplayMemberBinding="{Binding MetroStation}" />
+                            <GridViewColumn Header="Зарплата" Width="80" DisplayMemberBinding="{Binding BaseSalary, StringFormat=C, ConverterCulture=RU}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
 
-        <StatusBar Grid.Row="2">
-            <Label Name="lblStatus" Content="Готово" />
-            <ProgressBar Name="pbFindProgres" Width="150" Height="16" Visibility="Collapsed" />
-            <TextBlock Name="exportBlock" Visibility="Hidden">
-                <Hyperlink Click="Hyperlink_Click" >Экспорт CSV</Hyperlink> 
-            </TextBlock>
-        </StatusBar>
-    </Grid>
+                <StatusBar Grid.Row="2">
+                    <Label Name="lblStatus" Content="Готово" />
+                    <ProgressBar Name="pbFindProgres" Width="150" Height="16" Visibility="Collapsed" />
+                    <TextBlock Name="exportBlock" Visibility="Hidden">
+                    <Hyperlink Click="CompareLink_Click">К сравнению</Hyperlink>
+                    <Hyperlink Click="ExportLink_Click">Экспорт CSV</Hyperlink>
+                    </TextBlock>
+                </StatusBar>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Сравнение">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Margin="5,10">
+                    Сравнение средних зарплат по результатам поиска
+                </TextBlock>
+                
+                <ListView Grid.Row="1" Name="ComparsionList">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Поисковый запрос" Width="300" DisplayMemberBinding="{Binding Item1 }" />
+                            <GridViewColumn Header="Средняя зарплата" Width="400" DisplayMemberBinding="{Binding Item2, StringFormat=C, ConverterCulture=RU}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Grid>
+        </TabItem>
+    </TabControl>
 </Window>
