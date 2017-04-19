@@ -18,6 +18,8 @@ namespace HHVacancies
     /// </summary>
     public partial class MainWindow : Window
     {
+        // TODO: Рефакторинг
+
         private VacancyFinder finder;
 
         // Текущий поисковый запрос
