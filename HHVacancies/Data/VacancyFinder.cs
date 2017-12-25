@@ -44,7 +44,7 @@ namespace HHVacancies.Data
         private const string DesiredCurrency = "RUR";
 
         // Пути XPath к нужным элементам страницы
-        private const string TotalElem = "//*/div[@data-qa='vacancy-serp__found']";
+        private const string PagerElem = "//*/*[@data-qa='pager-page']";
         private const string ItemElem = "//*/div[starts-with(@class, " +
                                         "'search-result-description__item')]";
 
@@ -88,15 +88,12 @@ namespace HHVacancies.Data
             // Узнать число страниц, если в первый раз
             if(pagesCount == 0)
             {
-                var totalPagesElem = root.SelectSingleNode(TotalElem);
+                var pageLinks = root.SelectNodes(PagerElem);
                 // Если пагинатора на странице нет - результаты не найдены
-                if (totalPagesElem == null)
+                if (pageLinks == null || pageLinks.Count == 0)
                     return;
-
-                string countValue = totalPagesElem.InnerText;
-                string valueWOSpaces = countValue.Replace(((char)160).ToString(), String.Empty);
-                int totalVacancies = int.Parse(valueWOSpaces.Split(' ')[1]);
-                pagesCount = (int)Math.Ceiling((double)totalVacancies / ItemsPerPage);
+                
+                pagesCount = int.Parse(pageLinks.Last().InnerText);
             }
 
             // Парсинг страницы
