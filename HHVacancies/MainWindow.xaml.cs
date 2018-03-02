@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -18,18 +19,13 @@ namespace HHVacancies
     /// </summary>
     public partial class MainWindow : Window
     {
-        // TODO: Рефакторинг
-
-        private VacancyFinder finder;
-
-        // Текущий поисковый запрос
-        private string currentQuery;
+        // TODO: Рефакторинг (две ViewModel)
 
         // Средняя заралата по текущему запросу
         private double currentAvgSalary;
 
         // Выбранные вакансии для сравнения
-        private List<Tuple<string, double>> selectedVacancies;
+        private ObservableCollection<AverageInfo> selectedVacancies;
 
         // Сохранить данные о найденных вакансиях
         private void SaveData()
@@ -42,7 +38,7 @@ namespace HHVacancies
 
             if (dlg.ShowDialog().Value)
             {
-                var dataList = lbInfo.ItemsSource as IEnumerable<Vacancy>;
+                var dataList = InfoList.ItemsSource as IEnumerable<Vacancy>;
                 using(StreamWriter sw = new StreamWriter(dlg.FileName))
                 {
                     byte[] bom = Encoding.UTF8.GetPreamble();
@@ -58,92 +54,24 @@ namespace HHVacancies
             }
         }
 
-        // Показать результат
-        private void ShowData(IList<Vacancy> vacancies)
-        {
-            grdTop.IsEnabled = true;
-            pbFindProgres.Visibility = Visibility.Collapsed;
-            exportBlock.Visibility = Visibility.Visible;
-
-            // Отображение информации и статистика
-            lbInfo.ItemsSource = vacancies;
-            if(vacancies.Count > 0)
-            {
-                currentAvgSalary = vacancies.Average(item => item.BaseSalary);
-                lblStatus.Content = String.Format(
-                    "Готово. Всего: {0}, средняя зарплата: {1:C}", 
-                    vacancies.Count(), Math.Round(currentAvgSalary, 2));
-                exportBlock.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                lblStatus.Content = "Готово. Ничего не найдено";
-                exportBlock.Visibility = Visibility.Hidden;
-            }
-        }
-
-        // Показать прогресс операции
-        private void showProgress(int shownValue, int maxValue)
-        {
-            pbFindProgres.Maximum = maxValue;
-            pbFindProgres.Value = shownValue;
-        }
-
-        // Начать поиск вакансий
-        private async void StartSearchAsync()
-        {
-            grdTop.IsEnabled = false;
-            exportBlock.Visibility = Visibility.Hidden;
-            lblStatus.Content = "Выполняется поиск...";
-            pbFindProgres.Value = 0;
-            pbFindProgres.Visibility = Visibility.Visible;
-
-            finder = new VacancyFinder();
-            finder.ProgressChanged += (s, e) => {
-                Dispatcher.Invoke(() => showProgress(e.Value, e.Maximum));
-            };
-
-            currentQuery = tbVacancyName.Text;
-            string encodedName = Uri.EscapeDataString(currentQuery);
-
-            await finder.StartAsync(encodedName);
-            ShowData(finder.Vacancies);
-        }
-
         private void CompareLink_Click(object sender, RoutedEventArgs e)
         {
-            var vacancyAvgItem = Tuple.Create(currentQuery, currentAvgSalary);
-            selectedVacancies.Add(vacancyAvgItem);
-            selectedVacancies.Sort(new Comparison<Tuple<string, double>>((i1, i2) => {
-                return i2.Item2.CompareTo(i1.Item2);
-            }));
+            throw new NotImplementedException();
+            /*
+            selectedVacancies.Add(new AverageInfo(currentQuery, currentAvgSalary));
+            double maxSalary = selectedVacancies.Max(v => v.Salary);
+
+            foreach(var vInfo in selectedVacancies)
+            {
+                vInfo.Percent = Math.Round(vInfo.Salary / maxSalary * 300, 2);
+            }
+            */
         }
 
         private void ExportLink_Click(object sender, RoutedEventArgs e)
         {
-            SaveData();
-        }
-
-        private void btnFind_Click(object sender, RoutedEventArgs e)
-        {
-            if(tbVacancyName.Text.Trim().Length > 0)
-            {
-                StartSearchAsync();
-            }
-            else
-            {
-                MessageBox.Show("Название вакансии не задано", "Ошибка", 
-                    MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                tbVacancyName.Focus();
-            }
-        }
-
-        private void tbVacancyName_KeyUp(object sender, KeyEventArgs e)
-        {
-            if(e.Key == Key.Enter)
-            {
-                btnFind_Click(sender, e);
-            }
+            throw new NotImplementedException();
+            // SaveData();
         }
 
         // Двойной щелчок открывает ссылку на вакансию в браузере
@@ -165,9 +93,9 @@ namespace HHVacancies
         public MainWindow()
         {
             InitializeComponent();
-            tbVacancyName.Focus();
+            VacancyNameBox.Focus();
 
-            selectedVacancies = new List<Tuple<string, double>>();
+            selectedVacancies = new ObservableCollection<AverageInfo>();
             ComparsionList.ItemsSource = selectedVacancies;
         }
     }

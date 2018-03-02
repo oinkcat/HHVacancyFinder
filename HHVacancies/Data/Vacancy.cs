@@ -5,7 +5,7 @@ namespace HHVacancies.Data
     /// <summary>
     /// Представляет информацию о вакансии
     /// </summary>
-    internal class Vacancy
+    public class Vacancy
     {
         /// <summary>
         /// Наименование
