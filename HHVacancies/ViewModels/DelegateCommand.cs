@@ -48,9 +48,21 @@ namespace HHVacancies.ViewModels
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        // Реализация проверки возможности выполнения по умолчанию
+        private bool EnableCheckerDefaultImpl(object arg)
+        {
+            return true;
+        }
+
         public DelegateCommand(Func<object, bool> checker, Action<object> action)
         {
             this.canExecuteCallback = checker;
+            this.actionCallback = action;
+        }
+
+        public DelegateCommand(Action<object> action)
+        {
+            this.canExecuteCallback = EnableCheckerDefaultImpl;
             this.actionCallback = action;
         }
     }

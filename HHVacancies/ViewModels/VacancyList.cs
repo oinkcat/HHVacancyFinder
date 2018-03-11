@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Win32;
 using HHVacancies.Data;
+using HHVacancies.Exporters;
 
 namespace HHVacancies.ViewModels
 {
@@ -23,6 +24,11 @@ namespace HHVacancies.ViewModels
         /// Команда поиска вакансий
         /// </summary>
         public DelegateCommand SearchCommand { get; set; }
+
+        /// <summary>
+        /// Команда сохранения списка найденных вакансий
+        /// </summary>
+        public DelegateCommand ExportCommand { get; set; }
 
         /// <summary>
         /// Свойство модели представления изменено
@@ -149,11 +155,34 @@ namespace HHVacancies.ViewModels
             SearchCommand = new DelegateCommand(canFindChecker, findAction);
         }
 
+        // Настроить действия команды сохранения результатов
+        private void SetupSaveCommand()
+        {
+            Action<object> saveAction = param =>
+            {
+                var exporter = new CSVExporter();
+
+                var dlg = new SaveFileDialog()
+                {
+                    DefaultExt = exporter.FileExtension,
+                    Filter = exporter.FormatDescription
+                };
+
+                if (dlg.ShowDialog().Value)
+                {
+                    exporter.Export(dlg.FileName, FoundVacancies);
+                }
+            };
+
+            ExportCommand = new DelegateCommand(saveAction);
+        }
+
         public VacancyList()
         {
             Searching = false;
             StatusText = "Готово";
             SetupFindCommand();
+            SetupSaveCommand();
         }
     }
 }

@@ -62,6 +62,8 @@
     <Compile Include="Data\AverageInfo.cs" />
     <Compile Include="Data\Vacancy.cs" />
     <Compile Include="Data\VacancyFinder.cs" />
+    <Compile Include="Exporters\CSVExporter.cs" />
+    <Compile Include="Exporters\VacanciesExporter.cs" />
     <Compile Include="ViewModels\DelegateCommand.cs" />
     <Compile Include="ViewModels\VacancyList.cs" />
     <Page Include="MainWindow.xaml">

@@ -21,38 +21,8 @@ namespace HHVacancies
     {
         // TODO: Рефакторинг (две ViewModel)
 
-        // Средняя заралата по текущему запросу
-        private double currentAvgSalary;
-
         // Выбранные вакансии для сравнения
         private ObservableCollection<AverageInfo> selectedVacancies;
-
-        // Сохранить данные о найденных вакансиях
-        private void SaveData()
-        {
-            var dlg = new SaveFileDialog()
-            {
-                DefaultExt = ".csv",
-                Filter = "CSV-файлы|*.csv"
-            };
-
-            if (dlg.ShowDialog().Value)
-            {
-                var dataList = InfoList.ItemsSource as IEnumerable<Vacancy>;
-                using(StreamWriter sw = new StreamWriter(dlg.FileName))
-                {
-                    byte[] bom = Encoding.UTF8.GetPreamble();
-                    sw.BaseStream.Write(bom, 0, bom.Length);
-                    sw.WriteLine("Должность;Организация;Станция метро;Запрлата");
-                    foreach(Vacancy item in dataList)
-                    {
-                        sw.WriteLine("{0};{1};{2};{3}", 
-                            item.Name, item.Company, item.MetroStation,
-                            item.BaseSalary);
-                    }
-                }
-            }
-        }
 
         private void CompareLink_Click(object sender, RoutedEventArgs e)
         {
@@ -66,12 +36,6 @@ namespace HHVacancies
                 vInfo.Percent = Math.Round(vInfo.Salary / maxSalary * 300, 2);
             }
             */
-        }
-
-        private void ExportLink_Click(object sender, RoutedEventArgs e)
-        {
-            throw new NotImplementedException();
-            // SaveData();
         }
 
         // Двойной щелчок открывает ссылку на вакансию в браузере

@@ -68,7 +68,7 @@
                     <TextBlock Name="ActionsBlock"
                                Visibility="{Binding SearchComplete, Converter={StaticResource boolToVis}}">
                         <Hyperlink Click="CompareLink_Click">К сравнению</Hyperlink>
-                        <Hyperlink Click="ExportLink_Click">Экспорт CSV</Hyperlink>
+                        <Hyperlink Command="{Binding ExportCommand}">Экспорт CSV</Hyperlink>
                     </TextBlock>
                 </StatusBar>
             </Grid>

@@ -79,6 +79,12 @@ namespace HHVacancies.Data
             return String.Format(templ, URL_BASE, query, page);
         }
 
+        // Перевести обозначения символов HTML в эти символы
+        private string UnescapeHtmlEntities(string origString)
+        {
+            return origString.Replace("&amp;", "&");
+        }
+
         // Разобрать информацию о вакансиях на странице
         // TODO: Парсинг на основе конфигурации
         private void ParseVacanciesInfo(HtmlDocument doc)
@@ -123,8 +129,8 @@ namespace HHVacancies.Data
                     foundVacancies.Add(new Vacancy
                     {
                         BaseSalary = int.Parse(hnSalary.Attributes["content"].Value),
-                        Name = titleLink.InnerText.Trim(),
-                        Company = company.Trim(),
+                        Name = UnescapeHtmlEntities(titleLink.InnerText.Trim()),
+                        Company = UnescapeHtmlEntities(company.Trim()),
                         MetroStation = hnMetro != null ? hnMetro.InnerText : null,
                         Url = titleLink.Attributes["href"].Value
                     });
