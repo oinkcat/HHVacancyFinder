@@ -52,6 +52,7 @@ namespace HHVacancies.Data
         private const string TitleValue = "vacancy-serp__vacancy-title";
         private const string CompanyValue = "vacancy-serp__vacancy-employer";
         private const string MetroValue = "metro-station";
+        private const string SalaryValue = "vacancy-serp__vacancy-compensation";
 
         // Найденные в настоящее время какансии
         private List<Vacancy> foundVacancies;
@@ -85,6 +86,32 @@ namespace HHVacancies.Data
             return origString.Replace("&amp;", "&");
         }
 
+        // Считать значение средней зарплаты из заданного HTML узла
+        private int ParseAverageSalaryValue(HtmlNode node)
+        {
+            var valueBuilder = new StringBuilder();
+            int valuesSumm = 0;
+            int valuesCount = 0;
+
+            foreach(char c in node.InnerText)
+            {
+                if(Char.IsDigit(c))
+                {
+                    valueBuilder.Append(c);
+                }
+                else if(c == '-' || c == '.')
+                {
+                    valuesSumm += int.Parse(valueBuilder.ToString());
+                    valueBuilder.Clear();
+                    valuesCount++;
+                }
+            }
+
+            int avgSalary = valuesSumm / valuesCount;
+
+            return avgSalary;
+        }
+
         // Разобрать информацию о вакансиях на странице
         // TODO: Парсинг на основе конфигурации
         private void ParseVacanciesInfo(HtmlDocument doc)
@@ -108,31 +135,38 @@ namespace HHVacancies.Data
 
             foreach(HtmlNode infoNode in infos)
             {
-                var hnSalary = infoNode.Descendants("meta").FirstOrDefault(n => 
-                    n.Attributes["itemprop"].Value == "baseSalary");
+                // Зарплата
+                var hnSalary = infoNode.Descendants("div")
+                    .FirstOrDefault(n => n.Attributes["data-qa"] != null &&
+                                         n.Attributes["data-qa"].Value == SalaryValue);
                 if (hnSalary == null) continue;
-                var currency = infoNode.Descendants("meta")
-                    .FirstOrDefault(n => n.Attributes["itemprop"].Value == "salaryCurrency")
-                    .Attributes["content"].Value;
-                if (currency != DesiredCurrency)
-                    continue;
 
                 try
                 {
-                    var titleLink = infoNode.Descendants("a").First(n =>
-                        n.Attributes["data-qa"].Value == TitleValue);
-                    string company = infoNode.Descendants("a").First(n =>
-                        n.Attributes["data-qa"].Value == CompanyValue).InnerText;
-                    var hnMetro = infoNode.Descendants("span").FirstOrDefault(n => 
-                        n.Attributes["class"].Value == MetroValue);
+                    // Название
+                    var titleLink = infoNode.Descendants("a")
+                        .First(n => n.Attributes["data-qa"].Value == TitleValue);
+                    string title = UnescapeHtmlEntities(titleLink.InnerText.Trim());
+                    string url = titleLink.Attributes["href"].Value;
 
-                    foundVacancies.Add(new Vacancy
+                    // Компания
+                    string company = infoNode.Descendants("a")
+                        .First(n => n.Attributes["data-qa"].Value == CompanyValue)
+                        .InnerText;
+                    string companyName = UnescapeHtmlEntities(company.Trim());
+
+                    // Станция метро
+                    var metroSpan = infoNode.Descendants("span")
+                        .FirstOrDefault(n => n.Attributes["class"].Value == MetroValue);
+                    string metroStation = metroSpan != null ? metroSpan.InnerText : null;
+
+                    foundVacancies.Add(new Vacancy()
                     {
-                        BaseSalary = int.Parse(hnSalary.Attributes["content"].Value),
-                        Name = UnescapeHtmlEntities(titleLink.InnerText.Trim()),
-                        Company = UnescapeHtmlEntities(company.Trim()),
-                        MetroStation = hnMetro != null ? hnMetro.InnerText : null,
-                        Url = titleLink.Attributes["href"].Value
+                        BaseSalary = ParseAverageSalaryValue(hnSalary),
+                        Name = title,
+                        Company = companyName,
+                        MetroStation = metroStation,
+                        Url = url
                     });
                 }
                 catch
@@ -160,10 +194,8 @@ namespace HHVacancies.Data
                     ParseVacanciesInfo(loadedDocument);
                     p++;
 
-                    if (ProgressChanged != null)
-                    {
-                        ProgressChanged(this, new FindProgressEventArgs(p, pagesCount));
-                    }
+                    var progressArgs = new FindProgressEventArgs(p, pagesCount);
+                    ProgressChanged?.Invoke(this, progressArgs);
                 }
                 while (p < pagesCount);
             });
