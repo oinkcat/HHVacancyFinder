@@ -87,13 +87,20 @@ namespace HHVacancies.Data
         }
 
         // Считать значение средней зарплаты из заданного HTML узла
-        private int ParseAverageSalaryValue(HtmlNode node)
+        private int GetAverageSalaryForItemNode(HtmlNode itemNode)
         {
+            // Поиск узла информации о зарплате
+            var salaryNode = itemNode.Descendants("div")
+                .FirstOrDefault(n => n.Attributes["data-qa"] != null &&
+                                     n.Attributes["data-qa"].Value == SalaryValue);
+            if(salaryNode == null) { return 0; }
+
+            // Считать значение зарплаты
             var valueBuilder = new StringBuilder();
             int valuesSumm = 0;
             int valuesCount = 0;
 
-            foreach(char c in node.InnerText)
+            foreach(char c in salaryNode.InnerText)
             {
                 if(Char.IsDigit(c))
                 {
@@ -105,11 +112,74 @@ namespace HHVacancies.Data
                     valueBuilder.Clear();
                     valuesCount++;
                 }
+                else if(c >= 'A' && c <= 'Z')
+                {
+                    // Иностранная валюта не рассматривается
+                    return 0;
+                }
             }
 
             int avgSalary = valuesSumm / valuesCount;
 
             return avgSalary;
+        }
+
+        // Выдать число найденных страниц для узла страницы
+        private int GetPagesCountFromNode(HtmlNode pageNode)
+        {
+            var pageLinks = pageNode.SelectNodes(PagerElem);
+            // Если пагинатора на странице нет - результаты не найдены
+            if (pageLinks == null || pageLinks.Count == 0)
+                return 0;
+
+            return int.Parse(pageLinks.Last().InnerText);
+        }
+
+        // Выдать узлы элементов списка вакансий
+        private HtmlNodeCollection GetItemNodes(HtmlNode rootNode)
+        {
+            return rootNode.SelectNodes(ItemElem);
+        }
+
+        // Выдать наименование вакансии из элемента списка
+        private string GetVacancyTitleForItemNode(HtmlNode itemNode)
+        {
+            var titleNode = itemNode.Descendants("a")
+                        .First(n => n.Attributes["data-qa"].Value == TitleValue);
+            string title = UnescapeHtmlEntities(titleNode.InnerText.Trim());
+
+            return title;
+        }
+
+        // Выдать ссылку на страницу информации о вакансии из элемента списка
+        private string GetVacancyUrlForItemNode(HtmlNode itemNode)
+        {
+            string vacancyPageUrl = itemNode.Descendants("a")
+                        .First(n => n.Attributes["data-qa"].Value == TitleValue)
+                        .Attributes["href"].Value;
+
+            return vacancyPageUrl;
+        }
+
+        // Выдать название компании из жлемента списка
+        private string GetCompanyNameForItemNode(HtmlNode itemNode)
+        {
+            string company = itemNode.Descendants("a")
+                .First(n => n.Attributes["data-qa"].Value == CompanyValue)
+                .InnerText;
+            string companyName = UnescapeHtmlEntities(company.Trim());
+
+            return companyName;
+        }
+
+        // Выдать название станции метро из элемента списка
+        private string GetMetroStationForItemNode(HtmlNode htmlNode)
+        {
+            var metroSpan = htmlNode.Descendants("span")
+                .FirstOrDefault(n => n.Attributes["class"].Value == MetroValue);
+            string metroStation = metroSpan != null ? metroSpan.InnerText : null;
+
+            return metroStation;
         }
 
         // Разобрать информацию о вакансиях на странице
@@ -121,52 +191,29 @@ namespace HHVacancies.Data
             // Узнать число страниц, если в первый раз
             if(pagesCount == 0)
             {
-                var pageLinks = root.SelectNodes(PagerElem);
-                // Если пагинатора на странице нет - результаты не найдены
-                if (pageLinks == null || pageLinks.Count == 0)
-                    return;
-                
-                pagesCount = int.Parse(pageLinks.Last().InnerText);
+                pagesCount = GetPagesCountFromNode(root);
             }
 
             // Парсинг страницы
-            var infos = root.SelectNodes(ItemElem);
-            if (infos == null) { return; }
+            var listItemNodes = GetItemNodes(root);
+            if (listItemNodes == null) { return; }
 
-            foreach(HtmlNode infoNode in infos)
+            // Элементы списка вакансий
+            foreach(HtmlNode infoNode in listItemNodes)
             {
-                // Зарплата
-                var hnSalary = infoNode.Descendants("div")
-                    .FirstOrDefault(n => n.Attributes["data-qa"] != null &&
-                                         n.Attributes["data-qa"].Value == SalaryValue);
-                if (hnSalary == null) continue;
+                // Средняя зарплата
+                var averageSalary = GetAverageSalaryForItemNode(infoNode);
+                if (averageSalary == 0) continue;
 
                 try
                 {
-                    // Название
-                    var titleLink = infoNode.Descendants("a")
-                        .First(n => n.Attributes["data-qa"].Value == TitleValue);
-                    string title = UnescapeHtmlEntities(titleLink.InnerText.Trim());
-                    string url = titleLink.Attributes["href"].Value;
-
-                    // Компания
-                    string company = infoNode.Descendants("a")
-                        .First(n => n.Attributes["data-qa"].Value == CompanyValue)
-                        .InnerText;
-                    string companyName = UnescapeHtmlEntities(company.Trim());
-
-                    // Станция метро
-                    var metroSpan = infoNode.Descendants("span")
-                        .FirstOrDefault(n => n.Attributes["class"].Value == MetroValue);
-                    string metroStation = metroSpan != null ? metroSpan.InnerText : null;
-
                     foundVacancies.Add(new Vacancy()
                     {
-                        BaseSalary = ParseAverageSalaryValue(hnSalary),
-                        Name = title,
-                        Company = companyName,
-                        MetroStation = metroStation,
-                        Url = url
+                        BaseSalary = averageSalary,
+                        Name = GetVacancyTitleForItemNode(infoNode),
+                        Company = GetCompanyNameForItemNode(infoNode),
+                        MetroStation = GetMetroStationForItemNode(infoNode),
+                        Url = GetVacancyUrlForItemNode(infoNode)
                     });
                 }
                 catch
