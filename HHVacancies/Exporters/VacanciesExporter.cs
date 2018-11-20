@@ -7,7 +7,7 @@ namespace HHVacancies.Exporters
     /// <summary>
     /// Базовый класс экспорта списка найденных вакансий
     /// </summary>
-    public abstract class VacanciesExporter
+    internal abstract class VacanciesExporter
     {
         /// <summary>
         /// Расширение файла для экспорта

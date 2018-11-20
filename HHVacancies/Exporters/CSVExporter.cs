@@ -11,7 +11,7 @@ namespace HHVacancies.Exporters
     /// <summary>
     /// Выполняет экспорт списка найденных вакансий в формат CSV
     /// </summary>
-    public class CSVExporter : VacanciesExporter
+    internal class CSVExporter : VacanciesExporter
     {
         /// <summary>
         /// Расширение экспортируемого файла
