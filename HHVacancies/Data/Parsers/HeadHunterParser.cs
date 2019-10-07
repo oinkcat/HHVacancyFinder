@@ -18,8 +18,7 @@ namespace HHVacancies.Data.Parsers
 
         // Пути XPath к нужным элементам страницы
         private const string PagerElem = "//*/*[@data-qa='pager-page']";
-        private const string ItemElem = "//*/div[starts-with(@class, " +
-                                        "'vacancy-serp-item__row')]";
+        private const string ItemElem = "//*/div[@data-qa='vacancy-serp__vacancy']";
 
         // Значения атрибутов элементов информации о вакансиях
         private const string TitleValue = "vacancy-serp__vacancy-title";
