@@ -1,16 +1,13 @@
 ﻿<Window x:Class="HHVacancies.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:my="clr-namespace:HHVacancies.ViewModels"
         Title="Поиск вакансий с зарплатами" Height="550" Width="750"
         WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize"
         Icon="Resources/vacancy.ico">
 
     <Window.Resources>
-        <Style x:Key="ClickableItem" TargetType="{x:Type ListViewItem}">
-            <EventSetter Event="MouseDoubleClick" Handler="ItemDoubleClicked" />
-        </Style>
-        
         <!-- Модели представления -->
         <my:VacancyList x:Key="listVm" />
 
@@ -46,15 +43,25 @@
                             Command="{Binding SearchCommand}" />
                 </Grid>
 
-                <ListView Grid.Row="1" 
-                          Name="InfoList" ItemContainerStyle="{StaticResource ClickableItem}"
+                <ListView Grid.Row="1"
+                          Name="InfoList"
                           ItemsSource="{Binding FoundVacancies}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <i:InvokeCommandAction Command="{Binding OpenInBrowserCommand}" 
+                                                   CommandParameter="{Binding SelectedItem, 
+                                                                      RelativeSource={RelativeSource Mode=FindAncestor, 
+                                                                                        AncestorType=ListView}}" />
+                        </i:EventTrigger>                        
+                    </i:Interaction.Triggers>
+                    
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Должность" Width="250" DisplayMemberBinding="{Binding Name}" />
                             <GridViewColumn Header="Организация" Width="250" DisplayMemberBinding="{Binding Company}" />
                             <GridViewColumn Header="Метро" Width="120" DisplayMemberBinding="{Binding MetroStation}" />
-                            <GridViewColumn Header="Зарплата" Width="80" DisplayMemberBinding="{Binding BaseSalary, StringFormat=C, ConverterCulture=RU}" />
+                            <GridViewColumn Header="Зарплата" Width="80" 
+                                            DisplayMemberBinding="{Binding BaseSalary, StringFormat=C, ConverterCulture=RU}" />
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -67,12 +74,13 @@
                                  Value="{Binding SearchProgress}" />
                     <TextBlock Name="ActionsBlock"
                                Visibility="{Binding SearchComplete, Converter={StaticResource boolToVis}}">
-                        <Hyperlink Click="CompareLink_Click">К сравнению</Hyperlink>
+                        <Hyperlink Command="{Binding AddToComparsionCommand}">К сравнению</Hyperlink>
                         <Hyperlink Command="{Binding ExportCommand}">Экспорт CSV</Hyperlink>
                     </TextBlock>
                 </StatusBar>
             </Grid>
         </TabItem>
+        
         <TabItem Header="Сравнение">
             <Grid>
                 <Grid.RowDefinitions>

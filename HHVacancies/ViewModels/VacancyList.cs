@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.Win32;
+using System.Diagnostics;
 using HHVacancies.Data;
 using HHVacancies.Exporters;
 
@@ -29,6 +30,16 @@ namespace HHVacancies.ViewModels
         /// Команда сохранения списка найденных вакансий
         /// </summary>
         public DelegateCommand ExportCommand { get; set; }
+
+        /// <summary>
+        /// Команда открытия информации о вакансии в браузере
+        /// </summary>
+        public DelegateCommand OpenInBrowserCommand { get; set; }
+
+        /// <summary>
+        /// Команда добавления информации о вакансии к сравнению
+        /// </summary>
+        public DelegateCommand AddToComparsionCommand { get; set; }
 
         /// <summary>
         /// Свойство модели представления изменено
@@ -158,7 +169,7 @@ namespace HHVacancies.ViewModels
         // Настроить действия команды сохранения результатов
         private void SetupSaveCommand()
         {
-            Action<object> saveAction = param =>
+            ExportCommand = new DelegateCommand(param =>
             {
                 var exporter = new CSVExporter();
 
@@ -172,17 +183,49 @@ namespace HHVacancies.ViewModels
                 {
                     exporter.Export(dlg.FileName, FoundVacancies);
                 }
-            };
+            });
+        }
 
-            ExportCommand = new DelegateCommand(saveAction);
+        // Настроить команду открытия информации в браузере
+        private void SetupOpenInBrowserCommand()
+        {
+            OpenInBrowserCommand = new DelegateCommand(param =>
+            {
+                if (param != null)
+                {
+                    var infoUrl = (param as Vacancy).Url;
+
+                    // Открыть ссылку на информацию о вакансии в браузере
+                    var browserStartInfo = new ProcessStartInfo
+                    {
+                        UseShellExecute = true,
+                        Verb = "Open",
+                        FileName = infoUrl
+                    };
+                    Process.Start(browserStartInfo);
+                }
+            });
+        }
+
+        // Настройка команды добавления к сравнению
+        private void SetupAddToComparsionCommand()
+        {
+            AddToComparsionCommand = new DelegateCommand(_ =>
+            {
+                throw new NotImplementedException();
+            });
         }
 
         public VacancyList()
         {
             Searching = false;
             StatusText = "Готово";
+
+            // Установка действий для команд
             SetupFindCommand();
             SetupSaveCommand();
+            SetupOpenInBrowserCommand();
+            SetupAddToComparsionCommand();
         }
     }
 }
