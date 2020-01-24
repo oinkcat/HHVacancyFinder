@@ -4,9 +4,9 @@ using System.ComponentModel;
 namespace HHVacancies.Data
 {
     /// <summary>
-    /// Средние показатели по вакансии
+    /// Статистические показатели по вакансии
     /// </summary>
-    public class AverageInfo : IComparable, INotifyPropertyChanged
+    public class StatInfo : IComparable, INotifyPropertyChanged
     {
         private double percentValue;
 
@@ -21,9 +21,24 @@ namespace HHVacancies.Data
         public string Title { get; set; }
 
         /// <summary>
+        /// Число найденных вакансий
+        /// </summary>
+        public int Count { get; set; }
+
+        /// <summary>
+        /// Минимальное значение зарплаты
+        /// </summary>
+        public decimal Minimum { get; set; }
+
+        /// <summary>
         /// Средняя зарплата
         /// </summary>
-        public double Salary { get; set; }
+        public decimal Average { get; set; }
+
+        /// <summary>
+        /// Максимальное значение зарплаты
+        /// </summary>
+        public decimal Maximum { get; set; }
 
         /// <summary>
         /// Процент от максимальной
@@ -46,13 +61,12 @@ namespace HHVacancies.Data
         /// <returns>Результат сравнения зарплат</returns>
         public int CompareTo(object obj)
         {
-            return Salary.CompareTo((obj as AverageInfo).Salary);
+            return Average.CompareTo((obj as StatInfo).Average);
         }
 
-        public AverageInfo(string title, double avgSalary)
+        public StatInfo(string title)
         {
-            Title = title;
-            Salary = avgSalary;
+            Title = title.Trim();
         }
     }
 }

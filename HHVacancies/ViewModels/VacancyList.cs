@@ -22,6 +22,11 @@ namespace HHVacancies.ViewModels
         private double currentAvgSalary;
 
         /// <summary>
+        /// Объект, принимающий статистику по вакансии
+        /// </summary>
+        public IStatsReceiver StatsReceiver { get; set; }
+
+        /// <summary>
         /// Команда поиска вакансий
         /// </summary>
         public DelegateCommand SearchCommand { get; set; }
@@ -212,7 +217,18 @@ namespace HHVacancies.ViewModels
         {
             AddToComparsionCommand = new DelegateCommand(_ =>
             {
-                throw new NotImplementedException();
+                if(FoundVacancies.Count > 0)
+                {
+                    var stats = new StatInfo(SearchQuery)
+                    {
+                        Count = FoundVacancies.Count,
+                        Minimum = FoundVacancies.Min(v => v.BaseSalary),
+                        Average = (decimal)FoundVacancies.Average(v => v.BaseSalary),
+                        Maximum = FoundVacancies.Max(v => v.BaseSalary)
+                    };
+
+                    StatsReceiver.ReceiveStats(stats);
+                }
             });
         }
 

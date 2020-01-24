@@ -65,7 +65,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Data\AverageInfo.cs" />
+    <Compile Include="Data\StatInfo.cs" />
     <Compile Include="Data\Parsers\HeadHunterParser.cs" />
     <Compile Include="Data\Parsers\VacancyParser.cs" />
     <Compile Include="Data\Vacancy.cs" />
@@ -73,6 +73,8 @@
     <Compile Include="Exporters\CSVExporter.cs" />
     <Compile Include="Exporters\VacanciesExporter.cs" />
     <Compile Include="ViewModels\DelegateCommand.cs" />
+    <Compile Include="ViewModels\IStatsReceiver.cs" />
+    <Compile Include="ViewModels\VacanciesComparsion.cs" />
     <Compile Include="ViewModels\VacancyList.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
