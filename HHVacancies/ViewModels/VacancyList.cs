@@ -176,7 +176,7 @@ namespace HHVacancies.ViewModels
         {
             ExportCommand = new DelegateCommand(param =>
             {
-                var exporter = new CSVExporter();
+                var exporter = new CsvVacanciesExporter();
 
                 var dlg = new SaveFileDialog()
                 {

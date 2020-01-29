@@ -70,8 +70,9 @@
     <Compile Include="Data\Parsers\VacancyParser.cs" />
     <Compile Include="Data\Vacancy.cs" />
     <Compile Include="Data\VacancyFinder.cs" />
-    <Compile Include="Exporters\CSVExporter.cs" />
-    <Compile Include="Exporters\VacanciesExporter.cs" />
+    <Compile Include="Exporters\CsvStatsExporter.cs" />
+    <Compile Include="Exporters\CsvVacanciesExporter.cs" />
+    <Compile Include="Exporters\ListExporter.cs" />
     <Compile Include="ViewModels\DelegateCommand.cs" />
     <Compile Include="ViewModels\IStatsReceiver.cs" />
     <Compile Include="ViewModels\VacanciesComparsion.cs" />
