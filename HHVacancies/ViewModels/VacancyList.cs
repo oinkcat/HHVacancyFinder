@@ -219,14 +219,7 @@ namespace HHVacancies.ViewModels
             {
                 if(FoundVacancies.Count > 0)
                 {
-                    var stats = new StatInfo(SearchQuery)
-                    {
-                        Count = FoundVacancies.Count,
-                        Minimum = FoundVacancies.Min(v => v.BaseSalary),
-                        Average = (decimal)FoundVacancies.Average(v => v.BaseSalary),
-                        Maximum = FoundVacancies.Max(v => v.BaseSalary)
-                    };
-
+                    var stats = StatInfo.Compute(SearchQuery, FoundVacancies);
                     StatsReceiver.ReceiveStats(stats);
                 }
             });

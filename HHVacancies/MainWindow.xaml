@@ -122,14 +122,16 @@
                           ItemsSource="{Binding Source={StaticResource comparsionList}}">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Поисковый запрос" Width="300" DisplayMemberBinding="{Binding Title }" />
-                            <GridViewColumn Header="Кол-во" Width="100" 
+                            <GridViewColumn Header="Поисковый запрос" Width="275" DisplayMemberBinding="{Binding Title }" />
+                            <GridViewColumn Header="Кол-во" Width="85" 
                                             DisplayMemberBinding="{Binding Count}" />
-                            <GridViewColumn Header="Минимум" Width="100" 
+                            <GridViewColumn Header="Минимум" Width="85" 
                                             DisplayMemberBinding="{Binding Minimum, StringFormat=C, ConverterCulture=RU-ru}" />
-                            <GridViewColumn Header="Средняя" Width="100" 
+                            <GridViewColumn Header="Средняя" Width="85" 
                                             DisplayMemberBinding="{Binding Average, StringFormat=C, ConverterCulture=RU-ru}" />
-                            <GridViewColumn Header="Максимум" Width="100" 
+                            <GridViewColumn Header="90 P" Width="85" 
+                                            DisplayMemberBinding="{Binding Percentile90, StringFormat=C, ConverterCulture=RU-ru}" />
+                            <GridViewColumn Header="Максимум" Width="85" 
                                             DisplayMemberBinding="{Binding Maximum, StringFormat=C, ConverterCulture=RU-ru}" />
                         </GridView>
                     </ListView.View>
