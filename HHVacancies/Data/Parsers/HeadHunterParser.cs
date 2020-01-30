@@ -16,6 +16,9 @@ namespace HHVacancies.Data.Parsers
         // Адрес страницы поиска
         private const string BaseSearchUrl = "http://hh.ru/search/vacancy";
 
+        // Дополнительные параметры строки запроса
+        private const string QueryParams = "currency_code=RUR&items_on_page=100&area=1";
+
         // Пути XPath к нужным элементам страницы
         private const string PagerElem = "//*/*[@data-qa='pager-page']";
         private const string ItemElem = "//*/div[@data-qa='vacancy-serp__vacancy']";
@@ -39,11 +42,8 @@ namespace HHVacancies.Data.Parsers
         public override string GetNextPageUrl(string query)
         {
             PageNumber++;
-
-            string templ = "{0}?area=1&text={1}&currency_code=RUR&page={2}";
-            string searchUrl = String.Format(templ, BaseSearchUrl, query, PageNumber);
-
-            return searchUrl;
+            
+            return $"{BaseSearchUrl}?text={query}&page={PageNumber}&{QueryParams}";
         }
 
         /// <summary>

@@ -28,22 +28,27 @@ namespace HHVacancies.Data
         /// <summary>
         /// Минимальное значение зарплаты
         /// </summary>
-        public decimal Minimum { get; set; }
+        public int Minimum { get; set; }
 
         /// <summary>
         /// Средняя зарплата
         /// </summary>
-        public decimal Average { get; set; }
+        public int Average { get; set; }
+
+        /// <summary>
+        /// Медианная зарплата
+        /// </summary>
+        public int Median { get; set; }
 
         /// <summary>
         /// 90 перцентиль
         /// </summary>
-        public decimal Percentile90 { get; set; }
+        public int Percentile90 { get; set; }
 
         /// <summary>
         /// Максимальное значение зарплаты
         /// </summary>
-        public decimal Maximum { get; set; }
+        public int Maximum { get; set; }
 
         /// <summary>
         /// Сравнить со средней зарплатой по другой вакансии
@@ -72,7 +77,8 @@ namespace HHVacancies.Data
             {
                 Count = sorted.Count(),
                 Minimum = sorted.Min(v => v.BaseSalary),
-                Average = (decimal)sorted.Average(v => v.BaseSalary),
+                Average = (int)sorted.Average(v => v.BaseSalary),
+                Median = sorted.Skip(sorted.Count() / 2).First().BaseSalary,
                 Percentile90 = sorted.SkipWhile((_, i) => i < count90pct - 1)
                                      .First().BaseSalary,
                 Maximum = sorted.Max(v => v.BaseSalary)

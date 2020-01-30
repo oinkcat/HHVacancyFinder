@@ -17,7 +17,8 @@ namespace HHVacancies.Exporters
         /// </summary>
         protected override IList<string> Columns => new string[] {
             "Поисковый запрос", "Найдено вакансий",
-            "Мин. з/п", "Средняя з/п", "90 P", "Макс. з/п"
+            "Минимальная з/п", "Средняя з/п",
+            "Медианная з/п", "90-я процентиль", "Максимальная з/п"
         };
 
         /// <summary>
@@ -48,7 +49,8 @@ namespace HHVacancies.Exporters
                 {
                     object[] row = {
                         item.Title, item.Count,
-                        item.Minimum, item.Average, item.Percentile90, item.Maximum
+                        item.Minimum, item.Average,
+                        item.Median, item.Percentile90, item.Maximum
                     };
                     writer.WriteLine(String.Join(";", row));
                 }

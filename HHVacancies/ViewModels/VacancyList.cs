@@ -122,9 +122,15 @@ namespace HHVacancies.ViewModels
                 if(FoundVacancies.Count > 0)
                 {
                     currentAvgSalary = FoundVacancies.Average(item => item.BaseSalary);
+
+                    var moneyConv = new ShortCurrencyConverter();
+                    string shortSalary = moneyConv.Convert((int)currentAvgSalary,
+                                                           typeof(string),
+                                                           null, null) as string;
+
                     StatusText = String.Format(
-                        "Готово. Всего: {0}, средняя зарплата: {1:C}",
-                        FoundVacancies.Count(), Math.Round(currentAvgSalary, 2));
+                        "Готово. Всего: {0}, средняя зарплата: {1}",
+                        FoundVacancies.Count(), shortSalary);
                 }
                 else
                 {

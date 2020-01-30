@@ -75,6 +75,7 @@
     <Compile Include="Exporters\ListExporter.cs" />
     <Compile Include="ViewModels\DelegateCommand.cs" />
     <Compile Include="ViewModels\IStatsReceiver.cs" />
+    <Compile Include="ViewModels\ShortCurrencyConverter.cs" />
     <Compile Include="ViewModels\VacanciesComparsion.cs" />
     <Compile Include="ViewModels\VacancyList.cs" />
     <Page Include="MainWindow.xaml">

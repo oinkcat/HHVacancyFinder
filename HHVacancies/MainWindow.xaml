@@ -4,7 +4,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:my="clr-namespace:HHVacancies.ViewModels"
-        Title="Поиск вакансий с зарплатами" Height="550" Width="750"
+        Title="Поиск вакансий с зарплатами" Height="550" Width="800"
         WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize"
         Icon="Resources/vacancy.ico">
 
@@ -13,7 +13,9 @@
         <my:VacanciesComparsion x:Key="comparsionVm" />
         <my:VacancyList x:Key="listVm" StatsReceiver="{StaticResource comparsionVm}" />
 
+        <!-- Конвертеры -->
         <BooleanToVisibilityConverter x:Key="boolToVis" />
+        <my:ShortCurrencyConverter x:Key="moneyConverter" />
     </Window.Resources>
     
     <TabControl>
@@ -60,11 +62,11 @@
                     
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Должность" Width="250" DisplayMemberBinding="{Binding Name}" />
+                            <GridViewColumn Header="Должность" Width="300" DisplayMemberBinding="{Binding Name}" />
                             <GridViewColumn Header="Организация" Width="250" DisplayMemberBinding="{Binding Company}" />
                             <GridViewColumn Header="Метро" Width="120" DisplayMemberBinding="{Binding MetroStation}" />
                             <GridViewColumn Header="Зарплата" Width="80" 
-                                            DisplayMemberBinding="{Binding BaseSalary, StringFormat=C, ConverterCulture=RU}" />
+                                            DisplayMemberBinding="{Binding BaseSalary, Converter={StaticResource moneyConverter}}" />
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -122,17 +124,19 @@
                           ItemsSource="{Binding Source={StaticResource comparsionList}}">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Поисковый запрос" Width="275" DisplayMemberBinding="{Binding Title }" />
-                            <GridViewColumn Header="Кол-во" Width="85" 
+                            <GridViewColumn Header="Поисковый запрос" Width="265" DisplayMemberBinding="{Binding Title }" />
+                            <GridViewColumn Header="Кол-во" Width="60" 
                                             DisplayMemberBinding="{Binding Count}" />
                             <GridViewColumn Header="Минимум" Width="85" 
-                                            DisplayMemberBinding="{Binding Minimum, StringFormat=C, ConverterCulture=RU-ru}" />
+                                            DisplayMemberBinding="{Binding Minimum, Converter={StaticResource moneyConverter}}" />
                             <GridViewColumn Header="Средняя" Width="85" 
-                                            DisplayMemberBinding="{Binding Average, StringFormat=C, ConverterCulture=RU-ru}" />
+                                            DisplayMemberBinding="{Binding Average, Converter={StaticResource moneyConverter}}" />
+                            <GridViewColumn Header="Медиана" Width="85" 
+                                            DisplayMemberBinding="{Binding Median, Converter={StaticResource moneyConverter}}" />
                             <GridViewColumn Header="90 P" Width="85" 
-                                            DisplayMemberBinding="{Binding Percentile90, StringFormat=C, ConverterCulture=RU-ru}" />
+                                            DisplayMemberBinding="{Binding Percentile90, Converter={StaticResource moneyConverter}}" />
                             <GridViewColumn Header="Максимум" Width="85" 
-                                            DisplayMemberBinding="{Binding Maximum, StringFormat=C, ConverterCulture=RU-ru}" />
+                                            DisplayMemberBinding="{Binding Maximum, Converter={StaticResource moneyConverter}}" />
                         </GridView>
                     </ListView.View>
                 </ListView>
