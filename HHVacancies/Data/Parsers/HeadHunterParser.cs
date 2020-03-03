@@ -95,9 +95,8 @@ namespace HHVacancies.Data.Parsers
         private int GetAverageSalaryForItemNode(HtmlNode itemNode)
         {
             // Поиск узла информации о зарплате
-            var salaryNode = itemNode.Descendants("div")
-                .FirstOrDefault(n => n.Attributes["data-qa"] != null &&
-                                     n.Attributes["data-qa"].Value == SalaryValue);
+            var salaryNode = itemNode.Descendants("span")
+                .FirstOrDefault(n => n.Attributes["data-qa"]?.Value == SalaryValue);
             if (salaryNode == null) { return 0; }
 
             // Считать значение зарплаты
@@ -150,7 +149,7 @@ namespace HHVacancies.Data.Parsers
         private string GetVacancyTitleForItemNode(HtmlNode itemNode)
         {
             var titleNode = itemNode.Descendants("a")
-                        .First(n => n.Attributes["data-qa"].Value == TitleValue);
+                .First(n => n.Attributes["data-qa"].Value == TitleValue);
             string title = UnescapeHtmlEntities(titleNode.InnerText.Trim());
 
             return title;
@@ -182,7 +181,7 @@ namespace HHVacancies.Data.Parsers
         {
             var metroSpan = htmlNode.Descendants("span")
                 .FirstOrDefault(n => n.Attributes["class"].Value == MetroValue);
-            string metroStation = metroSpan != null ? metroSpan.InnerText : null;
+            string metroStation = metroSpan?.InnerText;
 
             return metroStation;
         }
