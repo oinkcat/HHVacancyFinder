@@ -148,8 +148,7 @@ namespace HHVacancies.Data.Parsers
         // Выдать наименование вакансии из элемента списка
         private string GetVacancyTitleForItemNode(HtmlNode itemNode)
         {
-            var titleNode = itemNode.Descendants("a")
-                .First(n => n.Attributes["data-qa"].Value == TitleValue);
+            var titleNode = GetNodeByDataQa(itemNode.Descendants("a"), TitleValue);
             string title = UnescapeHtmlEntities(titleNode.InnerText.Trim());
 
             return title;
@@ -158,9 +157,8 @@ namespace HHVacancies.Data.Parsers
         // Выдать ссылку на страницу информации о вакансии из элемента списка
         private string GetVacancyUrlForItemNode(HtmlNode itemNode)
         {
-            string vacancyPageUrl = itemNode.Descendants("a")
-                        .First(n => n.Attributes["data-qa"].Value == TitleValue)
-                        .Attributes["href"].Value;
+            string vacancyPageUrl = GetNodeByDataQa(itemNode.Descendants("a"), TitleValue)
+                .Attributes["href"].Value;
 
             return vacancyPageUrl;
         }
@@ -168,10 +166,8 @@ namespace HHVacancies.Data.Parsers
         // Выдать название компании из жлемента списка
         private string GetCompanyNameForItemNode(HtmlNode itemNode)
         {
-            string company = itemNode.Descendants("a")
-                .First(n => n.Attributes["data-qa"].Value == CompanyValue)
-                .InnerText;
-            string companyName = UnescapeHtmlEntities(company.Trim());
+            var companyInfoNode = GetNodeByDataQa(itemNode.Descendants("a"), CompanyValue);
+            string companyName = UnescapeHtmlEntities(companyInfoNode?.InnerText ?? "?");
 
             return companyName;
         }
@@ -184,6 +180,14 @@ namespace HHVacancies.Data.Parsers
             string metroStation = metroSpan?.InnerText;
 
             return metroStation;
+        }
+
+        // Выдать первый совпадающий по аттрибуту data-qa элемент
+        private HtmlNode GetNodeByDataQa(IEnumerable<HtmlNode> nodes, string qaValue)
+        {
+            return nodes.FirstOrDefault(n => n.Attributes.Any(attr => {
+                return attr.Name == "data-qa" && attr.Value == qaValue;
+            }));
         }
 
         public HeadHunterParser()
