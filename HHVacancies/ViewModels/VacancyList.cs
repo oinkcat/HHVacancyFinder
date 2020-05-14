@@ -7,6 +7,8 @@ using Microsoft.Win32;
 using System.Diagnostics;
 using HHVacancies.Data;
 using HHVacancies.Exporters;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace HHVacancies.ViewModels
 {
@@ -15,6 +17,12 @@ namespace HHVacancies.ViewModels
     /// </summary>
     public class VacancyList : INotifyPropertyChanged
     {
+        // Состояние пользовательского интерфейса
+        private enum UIState
+        {
+            Ready, Searching, Error
+        }
+
         // Запрос поиска
         private string searchQueryText;
 
@@ -69,7 +77,7 @@ namespace HHVacancies.ViewModels
         /// <summary>
         /// Поиск завершен
         /// </summary>
-        public bool SearchComplete { get; set; }
+        public bool SearchComplete => !Searching;
 
         /// <summary>
         /// Текст статуса
@@ -77,19 +85,23 @@ namespace HHVacancies.ViewModels
         public string StatusText { get; set; }
 
         /// <summary>
+        /// Найдены какие-либо результаты
+        /// </summary>
+        public bool IsResultsFound => SearchComplete &&
+                                      FoundVacancies != null && 
+                                      FoundVacancies.Count() > 0;
+
+        /// <summary>
         /// Элементы управления активны
         /// </summary>
-        public bool ControlsEnabled
-        {
-            get { return !Searching; }
-        }
+        public bool ControlsEnabled => !Searching;
 
         /// <summary>
         /// Запрос поиска
         /// </summary>
         public string SearchQuery
         {
-            get { return searchQueryText; }
+            get => searchQueryText;
             set
             {
                 searchQueryText = value;
@@ -107,41 +119,54 @@ namespace HHVacancies.ViewModels
         }
 
         // Установить состояние интерфейса
-        private void SetUIState(bool searching)
+        private void SetUIState(UIState newState)
         {
-            Searching = searching;
+            Searching = newState == UIState.Searching;
             NotifyChanged(nameof(Searching));
-            SearchComplete = !searching;
             NotifyChanged(nameof(SearchComplete));
             NotifyChanged(nameof(ControlsEnabled));
+            NotifyChanged(nameof(IsResultsFound));
+
             SearchProgress = 0;
             NotifyChanged(nameof(SearchProgress));
 
-            if(SearchComplete && (FoundVacancies != null))
+            StatusText = GetStatusBarText(newState);
+            NotifyChanged(nameof(StatusText));
+        }
+
+        // Выдать текст строки состояния для текущего состояния UI
+        private string GetStatusBarText(UIState state)
+        {
+            if (SearchComplete)
             {
-                if(FoundVacancies.Count > 0)
+                if (IsResultsFound)
                 {
                     currentAvgSalary = FoundVacancies.Average(item => item.BaseSalary);
 
-                    var moneyConv = new ShortCurrencyConverter();
-                    string shortSalary = moneyConv.Convert((int)currentAvgSalary,
-                                                           typeof(string),
-                                                           null, null) as string;
+                    string shortSalary = new ShortCurrencyConverter().Convert(
+                        (int)currentAvgSalary,
+                        typeof(string),
+                        null,
+                        null
+                    ) as string;
 
-                    StatusText = String.Format(
+                    return String.Format(
                         "Готово. Всего: {0}, средняя зарплата: {1}",
-                        FoundVacancies.Count(), shortSalary);
+                        FoundVacancies.Count(),
+                        shortSalary
+                    );
                 }
                 else
                 {
-                    StatusText = "Готово. Ничего не найдено";
+                    return state == UIState.Error ? 
+                        "Произошла ошибка. Попробуйте повторить поиск позднее" : 
+                        "Готово. Ничего не найдено";
                 }
             }
             else
             {
-                StatusText = "Выполняется поиск...";
+                return "Выполняется поиск...";
             }
-            NotifyChanged(nameof(StatusText));
         }
 
         // Установить прогресс поиска
@@ -149,6 +174,18 @@ namespace HHVacancies.ViewModels
         {
             SearchProgress = maxValue > 0 ? value * 100 / maxValue : 0;
             NotifyChanged(nameof(SearchProgress));
+        }
+
+        // Обработать возникшую ошибку
+        private void HandleError(object sender, Exception e)
+        {
+            var msgOkBtn = MessageBoxButton.OK;
+            var msgIcon = MessageBoxImage.Error;
+
+            Dispatcher.CurrentDispatcher.Invoke(() =>
+            {
+                MessageBox.Show(e.Message, "Ошибка", msgOkBtn, msgIcon);
+            });
         }
 
         // Настроить действия команды поиска
@@ -161,17 +198,24 @@ namespace HHVacancies.ViewModels
 
             Action<object> findAction = async param =>
             {
-                SetUIState(true);
+                FoundVacancies?.Clear();
+                SetUIState(UIState.Searching);
 
                 var finder = new VacancyFinder();
                 finder.ProgressChanged += (s, e) => SetProgress(e.Value, e.Maximum);
-                
+                finder.ErrorOccurred += HandleError;
+
                 string encodedName = Uri.EscapeDataString(SearchQuery);
                 await finder.StartAsync(encodedName);
 
-                FoundVacancies = new ObservableCollection<Vacancy>(finder.Vacancies);
+                if(finder.CompletedSuccessfully)
+                {
+                    FoundVacancies = new ObservableCollection<Vacancy>(finder.Vacancies);
+                }
+
                 NotifyChanged(nameof(FoundVacancies));
-                SetUIState(false);
+
+                SetUIState(finder.CompletedSuccessfully ? UIState.Ready : UIState.Error);
             };
 
             SearchCommand = new DelegateCommand(canFindChecker, findAction);
@@ -223,7 +267,7 @@ namespace HHVacancies.ViewModels
         {
             AddToComparsionCommand = new DelegateCommand(_ =>
             {
-                if(FoundVacancies.Count > 0)
+                if (FoundVacancies.Count > 0)
                 {
                     var stats = StatInfo.Compute(SearchQuery, FoundVacancies);
                     StatsReceiver.ReceiveStats(stats);

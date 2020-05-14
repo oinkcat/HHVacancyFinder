@@ -78,7 +78,7 @@
                                  Visibility="{Binding Searching, Converter={StaticResource boolToVis}}"
                                  Value="{Binding SearchProgress}" />
                     <TextBlock Name="ActionsBlock"
-                               Visibility="{Binding SearchComplete, Converter={StaticResource boolToVis}}">
+                               Visibility="{Binding IsResultsFound, Converter={StaticResource boolToVis}}">
                         <Hyperlink Command="{Binding AddToComparsionCommand}">К сравнению</Hyperlink>
                         <Hyperlink Command="{Binding ExportCommand}">Экспорт CSV</Hyperlink>
                     </TextBlock>
