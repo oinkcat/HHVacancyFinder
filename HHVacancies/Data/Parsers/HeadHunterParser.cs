@@ -135,8 +135,9 @@ namespace HHVacancies.Data.Parsers
             // Если пагинатора на странице нет - результаты не найдены
             if (pageLinks == null || pageLinks.Count == 0)
                 return 0;
-
-            return int.Parse(pageLinks.Last().InnerText);
+            
+            // Номера страниц начинаются с нуля
+            return int.Parse(pageLinks.Last().InnerText) - 1;
         }
 
         // Выдать узлы элементов списка вакансий
