@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 using HHVacancies.Data.Parsers;
+using System.Linq;
 
 namespace HHVacancies.Data
 {
@@ -36,6 +38,12 @@ namespace HHVacancies.Data
     /// </summary>
     internal class VacancyFinder
     {
+        // Таймаут запросов
+        private const int TimeoutInSeconds = 10;
+
+        // Максимальное число параллельных запросов
+        private int MaxParallelRequests = 2;
+
         /// <summary>
         /// События изменения прогресса операции поиска
         /// </summary>
@@ -81,28 +89,31 @@ namespace HHVacancies.Data
         {
             VacancyParser parser = new HeadHunterParser();
 
-            do
-            {
-                string url = parser.GetNextPageUrl(searchQuery);
-                var loadedDocument = GetHtmlDocument(url);
+            // Первая страница
+            string firstPageUrl = parser.GetNextPageUrl(searchQuery);
+            parser.SetCurrentPage(GetHtmlDocument(firstPageUrl));
+            Vacancies.AddRange(parser.ParsePage());
 
-                parser.SetCurrentPage(loadedDocument);
-                var vacanciesOnPage = parser.ParsePage();
-                Vacancies.AddRange(vacanciesOnPage);
+            int currentPageNumber = parser.PageNumber;
+            int totalPages = parser.TotalPages;
 
-                int numPages = parser.PageNumber;
-                int totalPages = parser.TotalPages;
-                var progressArgs = new FindProgressEventArgs(numPages, totalPages);
-                ProgressChanged?.Invoke(this, progressArgs);
-            }
-            while (parser.HasMorePages);
+            // Остальные страницы
+            Parallel.ForEach(parser.GetSearchResultsPages(searchQuery).Skip(1), 
+                new ParallelOptions {  MaxDegreeOfParallelism = MaxParallelRequests },
+                url => {
+                    parser.SetCurrentPage(GetHtmlDocument(url));
+                    var vacanciesOnPage = parser.ParsePage();
+                    Vacancies.AddRange(vacanciesOnPage);
+
+                    int numPages = Interlocked.Increment(ref currentPageNumber);
+                    var progressArgs = new FindProgressEventArgs(numPages, totalPages);
+                    ProgressChanged?.Invoke(this, progressArgs);
+            });
         }
 
         // Загрузить страницу результатов поиска
         private HtmlDocument GetHtmlDocument(string url)
         {
-            const int TimeoutInSeconds = 5;
-
             var pageRequest = HttpWebRequest.CreateHttp(url);
             pageRequest.Timeout = TimeoutInSeconds * 1000;
             pageRequest.ReadWriteTimeout = pageRequest.Timeout;

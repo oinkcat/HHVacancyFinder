@@ -42,8 +42,23 @@ namespace HHVacancies.Data.Parsers
         public override string GetNextPageUrl(string query)
         {
             PageNumber++;
-            
-            return $"{BaseSearchUrl}?text={query}&page={PageNumber}&{QueryParams}";
+            return GetUrlForPage(query, PageNumber);
+        }
+
+        /// <summary>
+        /// Выдать все ссылки на страницы результатов поиска для запроса
+        /// </summary>
+        /// <returns>Ссылки на страницы результатов</returns>
+        public override IEnumerable<string> GetSearchResultsPages(string query)
+        {
+            return Enumerable.Range(0, TotalPages)
+                .Select(num => GetUrlForPage(query, num));
+        }
+
+        // Выдать ссылку на заданную страницу резудьтатов
+        private string GetUrlForPage(string query, int pageNumber)
+        {
+            return $"{BaseSearchUrl}?text={query}&page={pageNumber}&{QueryParams}";
         }
 
         /// <summary>
@@ -91,6 +106,24 @@ namespace HHVacancies.Data.Parsers
             return vacanciesOnPage;
         }
 
+        // Выдать число найденных страниц для узла страницы
+        private int GetPagesCount()
+        {
+            var pageLinks = RootNode.SelectNodes(PagerElem);
+            // Если пагинатора на странице нет - результаты не найдены
+            if (pageLinks == null || pageLinks.Count == 0)
+                return 0;
+
+            // Номера страниц начинаются с нуля
+            return int.Parse(pageLinks.Last().InnerText) - 1;
+        }
+
+        // Выдать узлы элементов списка вакансий
+        private HtmlNodeCollection GetItemNodes()
+        {
+            return RootNode.SelectNodes(ItemElem);
+        }
+
         // Считать значение средней зарплаты из заданного HTML узла
         private int GetAverageSalaryForItemNode(HtmlNode itemNode)
         {
@@ -126,24 +159,6 @@ namespace HHVacancies.Data.Parsers
             int avgSalary = valuesSumm / valuesCount;
 
             return avgSalary;
-        }
-
-        // Выдать число найденных страниц для узла страницы
-        private int GetPagesCount()
-        {
-            var pageLinks = RootNode.SelectNodes(PagerElem);
-            // Если пагинатора на странице нет - результаты не найдены
-            if (pageLinks == null || pageLinks.Count == 0)
-                return 0;
-            
-            // Номера страниц начинаются с нуля
-            return int.Parse(pageLinks.Last().InnerText) - 1;
-        }
-
-        // Выдать узлы элементов списка вакансий
-        private HtmlNodeCollection GetItemNodes()
-        {
-            return RootNode.SelectNodes(ItemElem);
         }
 
         // Выдать наименование вакансии из элемента списка

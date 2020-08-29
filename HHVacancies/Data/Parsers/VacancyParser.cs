@@ -24,11 +24,17 @@ namespace HHVacancies.Data.Parsers
         }
 
         /// <summary>
-        /// Выдать строку поиска вакансии
+        /// Выдать ссылку для поиска вакансии
         /// </summary>
         /// <param name="query">Строка запроса</param>
         /// <returns>Строка запроса для поиска вакансии</returns>
         public abstract string GetNextPageUrl(string query);
+
+        /// <summary>
+        /// Выдать ссылки для всех страниц поисковой выдачи для запроса
+        /// </summary>
+        /// <returns>Ссылки страниц результатов поиска</returns>
+        public abstract IEnumerable<string> GetSearchResultsPages(string query);
 
         /// <summary>
         /// Получить информацию о вакансиях на странице
