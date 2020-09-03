@@ -10,37 +10,25 @@ namespace HHVacancies.Data.Parsers
     internal abstract class VacancyParser
     {
         /// <summary>
-        /// Корневой элемент страницы
+        /// Выдать ссылку страницы результатов поиска
         /// </summary>
-        protected HtmlNode RootNode;
-
-        /// <summary>
-        /// Установить текущую активную страницу
-        /// </summary>
-        /// <param name="doc"></param>
-        public void SetCurrentPage(HtmlDocument doc)
-        {
-            RootNode = doc.DocumentNode;
-        }
-
-        /// <summary>
-        /// Выдать ссылку для поиска вакансии
-        /// </summary>
-        /// <param name="query">Строка запроса</param>
-        /// <returns>Строка запроса для поиска вакансии</returns>
-        public abstract string GetNextPageUrl(string query);
+        /// <param name="query">Поисковый запрос</param>
+        /// <returns>Ссылка на первую страницу поисковой выдачи</returns>
+        public abstract string GetResultsPageUrl(string query);
 
         /// <summary>
         /// Выдать ссылки для всех страниц поисковой выдачи для запроса
         /// </summary>
+        /// <param name="query">Поисковый запрос</param>
         /// <returns>Ссылки страниц результатов поиска</returns>
         public abstract IEnumerable<string> GetSearchResultsPages(string query);
 
         /// <summary>
         /// Получить информацию о вакансиях на странице
         /// </summary>
+        /// <param name="pageDoc">Документ страницы результатов</param>
         /// <returns>Список вакансий на странице</returns>
-        public abstract IList<Vacancy> ParsePage();
+        public abstract IList<Vacancy> ParsePage(HtmlDocument pageDoc);
 
         /// <summary>
         /// Перевести обозначения символов HTML в эти символы
@@ -53,18 +41,8 @@ namespace HHVacancies.Data.Parsers
         }
 
         /// <summary>
-        /// Номер текущей страницы
-        /// </summary>
-        public int PageNumber { get; protected set; }
-
-        /// <summary>
         /// Общее число страниц
         /// </summary>
-        public int TotalPages { get; protected set; }
-
-        /// <summary>
-        /// Имеются ли непросмотренные страницы
-        /// </summary>
-        public abstract bool HasMorePages { get; }
+        public int TotalResultsPages { get; protected set; }
     }
 }

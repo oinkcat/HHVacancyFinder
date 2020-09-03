@@ -44,6 +44,10 @@ namespace HHVacancies.Data
         // Максимальное число параллельных запросов
         private int MaxParallelRequests = 2;
 
+        private VacancyParser parser;
+
+        private int currentPageNumber;
+
         /// <summary>
         /// События изменения прогресса операции поиска
         /// </summary>
@@ -87,28 +91,16 @@ namespace HHVacancies.Data
         // Найти вакансии по заданному запросу
         private void FindVacancies(string searchQuery)
         {
-            VacancyParser parser = new HeadHunterParser();
-
             // Первая страница
-            string firstPageUrl = parser.GetNextPageUrl(searchQuery);
-            parser.SetCurrentPage(GetHtmlDocument(firstPageUrl));
-            Vacancies.AddRange(parser.ParsePage());
-
-            int currentPageNumber = parser.PageNumber;
-            int totalPages = parser.TotalPages;
+            string firstPageUrl = parser.GetResultsPageUrl(searchQuery);
+            LoadAndParseVacancies(firstPageUrl);
 
             // Остальные страницы
-            Parallel.ForEach(parser.GetSearchResultsPages(searchQuery).Skip(1), 
+            Parallel.ForEach (
+                parser.GetSearchResultsPages(searchQuery).Skip(1), 
                 new ParallelOptions {  MaxDegreeOfParallelism = MaxParallelRequests },
-                url => {
-                    parser.SetCurrentPage(GetHtmlDocument(url));
-                    var vacanciesOnPage = parser.ParsePage();
-                    Vacancies.AddRange(vacanciesOnPage);
-
-                    int numPages = Interlocked.Increment(ref currentPageNumber);
-                    var progressArgs = new FindProgressEventArgs(numPages, totalPages);
-                    ProgressChanged?.Invoke(this, progressArgs);
-            });
+                LoadAndParseVacancies
+            );
         }
 
         // Загрузить страницу результатов поиска
@@ -126,6 +118,25 @@ namespace HHVacancies.Data
 
                 return resultsPageDocument;
             }
+        }
+
+        // Загрузить страницу результатов поиска и парсить вакансии на ней
+        private void LoadAndParseVacancies(string resultsUrl)
+        {
+            // Найти вакансии на странице
+            var vacanciesOnPage = parser.ParsePage(GetHtmlDocument(resultsUrl));
+            Vacancies.AddRange(vacanciesOnPage);
+
+            // Выдать прогресс поиска
+            int pageNum = Interlocked.Increment(ref currentPageNumber);
+            int totalPages = parser.TotalResultsPages;
+            var progressArgs = new FindProgressEventArgs(pageNum, totalPages);
+            ProgressChanged?.Invoke(this, progressArgs);
+        }
+
+        public VacancyFinder()
+        {
+            parser = new HeadHunterParser();
         }
     }
 }

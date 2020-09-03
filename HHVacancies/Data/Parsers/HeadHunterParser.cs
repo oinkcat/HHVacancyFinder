@@ -30,19 +30,13 @@ namespace HHVacancies.Data.Parsers
         private const string SalaryValue = "vacancy-serp__vacancy-compensation";
 
         /// <summary>
-        /// Имеются ли еще непросмотренные страницы
-        /// </summary>
-        public override bool HasMorePages => PageNumber < TotalPages;
-
-        /// <summary>
         /// Выдать ссылку для поиска вакансий
         /// </summary>
         /// <param name="query">Строка запроса пользователя</param>
         /// <returns>Ссылка на страницу поиска</returns>
-        public override string GetNextPageUrl(string query)
+        public override string GetResultsPageUrl(string query)
         {
-            PageNumber++;
-            return GetUrlForPage(query, PageNumber);
+            return GetUrlForPage(query, 0);
         }
 
         /// <summary>
@@ -51,7 +45,7 @@ namespace HHVacancies.Data.Parsers
         /// <returns>Ссылки на страницы результатов</returns>
         public override IEnumerable<string> GetSearchResultsPages(string query)
         {
-            return Enumerable.Range(0, TotalPages)
+            return Enumerable.Range(0, TotalResultsPages)
                 .Select(num => GetUrlForPage(query, num));
         }
 
@@ -65,18 +59,19 @@ namespace HHVacancies.Data.Parsers
         /// Выдать вакансии на текущей странице
         /// </summary>
         /// <returns>Список доступных вакансий на странице</returns>
-        public override IList<Vacancy> ParsePage()
+        public override IList<Vacancy> ParsePage(HtmlDocument pageDoc)
         {
+            var rootNode = pageDoc.DocumentNode;
             var vacanciesOnPage = new List<Vacancy>();
 
             // Узнать число страниц, если в первый раз
-            if (TotalPages == 0)
+            if (TotalResultsPages == 0)
             {
-                TotalPages = GetPagesCount();
+                TotalResultsPages = GetPagesCount(rootNode);
             }
 
             // Парсинг страницы
-            var listItemNodes = GetItemNodes();
+            var listItemNodes = GetItemNodes(rootNode);
             if (listItemNodes == null) { return vacanciesOnPage; }
 
             // Элементы списка вакансий
@@ -107,9 +102,9 @@ namespace HHVacancies.Data.Parsers
         }
 
         // Выдать число найденных страниц для узла страницы
-        private int GetPagesCount()
+        private int GetPagesCount(HtmlNode rootNode)
         {
-            var pageLinks = RootNode.SelectNodes(PagerElem);
+            var pageLinks = rootNode.SelectNodes(PagerElem);
             // Если пагинатора на странице нет - результаты не найдены
             if (pageLinks == null || pageLinks.Count == 0)
                 return 0;
@@ -119,9 +114,9 @@ namespace HHVacancies.Data.Parsers
         }
 
         // Выдать узлы элементов списка вакансий
-        private HtmlNodeCollection GetItemNodes()
+        private HtmlNodeCollection GetItemNodes(HtmlNode rootNode)
         {
-            return RootNode.SelectNodes(ItemElem);
+            return rootNode.SelectNodes(ItemElem);
         }
 
         // Считать значение средней зарплаты из заданного HTML узла
@@ -204,11 +199,6 @@ namespace HHVacancies.Data.Parsers
             return nodes.FirstOrDefault(n => n.Attributes.Any(attr => {
                 return attr.Name == "data-qa" && attr.Value == qaValue;
             }));
-        }
-
-        public HeadHunterParser()
-        {
-            PageNumber = -1;
         }
     }
 }
