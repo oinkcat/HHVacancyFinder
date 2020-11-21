@@ -48,6 +48,8 @@ namespace HHVacancies.Data
 
         private int currentPageNumber;
 
+        private CancellationTokenSource stopSource;
+
         /// <summary>
         /// События изменения прогресса операции поиска
         /// </summary>
@@ -78,7 +80,7 @@ namespace HHVacancies.Data
             await Task.Factory.StartNew(() => {
                 try
                 {
-                    FindVacancies(searchQuery);
+                    FindVacancies(searchQuery, stopSource.Token);
                     CompletedSuccessfully = true;
                 }
                 catch(Exception e)
@@ -88,8 +90,16 @@ namespace HHVacancies.Data
             });
         }
 
+        /// <summary>
+        /// Остановить поиск
+        /// </summary>
+        public void Stop()
+        {
+            stopSource.Cancel();
+        }
+
         // Найти вакансии по заданному запросу
-        private void FindVacancies(string searchQuery)
+        private void FindVacancies(string searchQuery, CancellationToken stopToken)
         {
             // Первая страница
             string firstPageUrl = parser.GetResultsPageUrl(searchQuery);
@@ -99,7 +109,13 @@ namespace HHVacancies.Data
             Parallel.ForEach (
                 parser.GetSearchResultsPages(searchQuery).Skip(1), 
                 new ParallelOptions {  MaxDegreeOfParallelism = MaxParallelRequests },
-                LoadAndParseVacancies
+                (string pageUrl) =>
+                {
+                    if(!stopToken.IsCancellationRequested)
+                    {
+                        LoadAndParseVacancies(pageUrl);
+                    }
+                }
             );
         }
 
@@ -137,6 +153,7 @@ namespace HHVacancies.Data
         public VacancyFinder()
         {
             parser = new HeadHunterParser();
+            stopSource = new CancellationTokenSource();
         }
     }
 }

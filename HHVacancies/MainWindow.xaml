@@ -82,6 +82,10 @@
                         <Hyperlink Command="{Binding AddToComparsionCommand}">К сравнению</Hyperlink>
                         <Hyperlink Command="{Binding ExportCommand}">Экспорт CSV</Hyperlink>
                     </TextBlock>
+                    <TextBlock Name="CancelBlock" 
+                               Visibility="{Binding Searching, Converter={StaticResource boolToVis}}">
+                        <Hyperlink Command="{Binding StopSearchCommand}">Остановить</Hyperlink>
+                    </TextBlock>
                 </StatusBar>
             </Grid>
         </TabItem>

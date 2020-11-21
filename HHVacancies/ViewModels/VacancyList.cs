@@ -29,6 +29,9 @@ namespace HHVacancies.ViewModels
         // Средняя заралата по текущему запросу
         private double currentAvgSalary;
 
+        // Ищет вакансии по запросу
+        private VacancyFinder finder;
+
         /// <summary>
         /// Объект, принимающий статистику по вакансии
         /// </summary>
@@ -53,6 +56,11 @@ namespace HHVacancies.ViewModels
         /// Команда добавления информации о вакансии к сравнению
         /// </summary>
         public DelegateCommand AddToComparsionCommand { get; set; }
+
+        /// <summary>
+        /// Команда остановки процесса поиска
+        /// </summary>
+        public DelegateCommand StopSearchCommand { get; set; }
 
         /// <summary>
         /// Свойство модели представления изменено
@@ -201,7 +209,7 @@ namespace HHVacancies.ViewModels
                 FoundVacancies?.Clear();
                 SetUIState(UIState.Searching);
 
-                var finder = new VacancyFinder();
+                finder = new VacancyFinder();
                 finder.ProgressChanged += (s, e) => SetProgress(e.Value, e.Maximum);
                 finder.ErrorOccurred += HandleError;
 
@@ -275,6 +283,12 @@ namespace HHVacancies.ViewModels
             });
         }
 
+        // Настройка команды остановки поиска
+        private void SetupStopSearchCommand()
+        {
+            StopSearchCommand = new DelegateCommand(_ => finder.Stop());
+        }
+
         public VacancyList()
         {
             Searching = false;
@@ -285,6 +299,7 @@ namespace HHVacancies.ViewModels
             SetupSaveCommand();
             SetupOpenInBrowserCommand();
             SetupAddToComparsionCommand();
+            SetupStopSearchCommand();
         }
     }
 }
