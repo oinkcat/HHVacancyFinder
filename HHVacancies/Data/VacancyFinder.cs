@@ -42,13 +42,13 @@ namespace HHVacancies.Data
         private const int TimeoutInSeconds = 10;
 
         // Максимальное число параллельных запросов
-        private int MaxParallelRequests = 2;
+        private const int MaxParallelRequests = 2;
 
-        private VacancyParser parser;
+        private readonly VacancyParser parser;
+
+        private readonly CancellationTokenSource stopSource;
 
         private int currentPageNumber;
-
-        private CancellationTokenSource stopSource;
 
         /// <summary>
         /// События изменения прогресса операции поиска

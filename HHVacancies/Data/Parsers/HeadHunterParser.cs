@@ -14,20 +14,20 @@ namespace HHVacancies.Data.Parsers
     internal class HeadHunterParser : VacancyParser
     {
         // Адрес страницы поиска
-        private const string BaseSearchUrl = "http://hh.ru/search/vacancy";
+        const string BaseSearchUrl = "http://hh.ru/search/vacancy";
 
         // Дополнительные параметры строки запроса
-        private const string QueryParams = "currency_code=RUR&items_on_page=100&area=1";
+        const string QueryParams = "currency_code=RUR&items_on_page=100&area=1";
 
         // Пути XPath к нужным элементам страницы
-        private const string PagerElem = "//*/*[@data-qa='pager-page']";
-        private const string ItemElem = "//*/div[@data-qa='vacancy-serp__vacancy']";
+        const string PagerElem = "//*/*[@data-qa='pager-page']";
+        const string ItemElem = "//*/div[contains(@data-qa, 'vacancy-serp__vacancy')]";
 
         // Значения атрибутов элементов информации о вакансиях
-        private const string TitleValue = "vacancy-serp__vacancy-title";
-        private const string CompanyValue = "vacancy-serp__vacancy-employer";
-        private const string MetroValue = "metro-station";
-        private const string SalaryValue = "vacancy-serp__vacancy-compensation";
+        const string TitleValue = "vacancy-serp__vacancy-title";
+        const string CompanyValue = "vacancy-serp__vacancy-employer";
+        const string MetroValue = "metro-station";
+        const string SalaryValue = "vacancy-serp__vacancy-compensation";
 
         /// <summary>
         /// Выдать ссылку для поиска вакансий
@@ -138,11 +138,14 @@ namespace HHVacancies.Data.Parsers
                 {
                     valueBuilder.Append(c);
                 }
-                else if (c == '-' || c == '.')
+                else if (c == '-' || c == '–' || c == '.')
                 {
-                    valuesSumm += int.Parse(valueBuilder.ToString());
-                    valueBuilder.Clear();
-                    valuesCount++;
+                    if(valueBuilder.Length > 0)
+                    {
+                        valuesSumm += int.Parse(valueBuilder.ToString());
+                        valueBuilder.Clear();
+                        valuesCount++;
+                    }
                 }
                 else if (c >= 'A' && c <= 'Z')
                 {
@@ -187,7 +190,7 @@ namespace HHVacancies.Data.Parsers
         private string GetMetroStationForItemNode(HtmlNode htmlNode)
         {
             var metroSpan = htmlNode.Descendants("span")
-                .FirstOrDefault(n => n.Attributes["class"].Value == MetroValue);
+                .FirstOrDefault(n => n.Attributes["class"]?.Value == MetroValue);
             string metroStation = metroSpan?.InnerText;
 
             return metroStation;
