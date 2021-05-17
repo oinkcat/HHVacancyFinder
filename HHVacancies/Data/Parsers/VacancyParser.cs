@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 
 namespace HHVacancies.Data.Parsers
@@ -9,6 +10,15 @@ namespace HHVacancies.Data.Parsers
     /// </summary>
     internal abstract class VacancyParser
     {
+        private const string CommentRegexTmpl = @"<!--[^>]*-->";
+
+        private readonly Regex commentRegex;
+
+        public VacancyParser()
+        {
+            commentRegex = new Regex(CommentRegexTmpl, RegexOptions.Compiled);
+        }
+
         /// <summary>
         /// Выдать ссылку страницы результатов поиска
         /// </summary>
@@ -38,6 +48,16 @@ namespace HHVacancies.Data.Parsers
         protected string UnescapeHtmlEntities(string origString)
         {
             return origString.Replace("&amp;", "&");
+        }
+
+        /// <summary>
+        /// Вырезать HTML комментарии из строки
+        /// </summary>
+        /// <param name="origString">Оригрнальная строка</param>
+        /// <returns>Строка с вырезанными комментариями</returns>
+        protected string StripComments(string origString)
+        {
+            return commentRegex.Replace(origString, String.Empty);
         }
 
         /// <summary>

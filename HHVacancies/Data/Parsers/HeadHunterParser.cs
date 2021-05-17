@@ -17,7 +17,7 @@ namespace HHVacancies.Data.Parsers
         const string BaseSearchUrl = "http://hh.ru/search/vacancy";
 
         // Дополнительные параметры строки запроса
-        const string QueryParams = "currency_code=RUR&items_on_page=100&area=1";
+        const string QueryParams = "currency_code=RUR&only_with_salary=true&area=1";
 
         // Пути XPath к нужным элементам страницы
         const string PagerElem = "//*/*[@data-qa='pager-page']";
@@ -165,7 +165,7 @@ namespace HHVacancies.Data.Parsers
             var titleNode = GetNodeByDataQa(itemNode.Descendants("a"), TitleValue);
             string title = UnescapeHtmlEntities(titleNode.InnerText.Trim());
 
-            return title;
+            return StripComments(title);
         }
 
         // Выдать ссылку на страницу информации о вакансии из элемента списка
@@ -183,7 +183,7 @@ namespace HHVacancies.Data.Parsers
             var companyInfoNode = GetNodeByDataQa(itemNode.Descendants("a"), CompanyValue);
             string companyName = UnescapeHtmlEntities(companyInfoNode?.InnerText ?? "?");
 
-            return companyName;
+            return StripComments(companyName);
         }
 
         // Выдать название станции метро из элемента списка
