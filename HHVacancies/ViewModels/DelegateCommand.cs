@@ -13,7 +13,7 @@ namespace HHVacancies.ViewModels
         private Func<object, bool> canExecuteCallback;
 
         // Делегат выполнения действия
-        private Action<object> actionCallback;
+        private readonly Action<object> actionCallback;
 
         /// <summary>
         /// Возможно ли выполнить команду

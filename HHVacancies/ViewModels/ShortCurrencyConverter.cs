@@ -14,8 +14,7 @@ namespace HHVacancies.ViewModels
         /// </summary>
         public object Convert(object value, Type type, object param, CultureInfo ci)
         {
-            if (type != typeof(string))
-                throw new InvalidCastException();
+            if (type != typeof(string)) { throw new InvalidCastException(); }
 
             string currencyValue = ((int)value).ToString("C");
             var roubleSymbol = new CultureInfo("RU-ru").NumberFormat.CurrencySymbol;

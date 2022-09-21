@@ -24,7 +24,7 @@ namespace HHVacancies.Data.Parsers
         const string ItemElem = "//*/div[contains(@data-qa, 'vacancy-serp__vacancy')]";
 
         // Значения атрибутов элементов информации о вакансиях
-        const string TitleValue = "vacancy-serp__vacancy-title";
+        const string TitleValue = "serp-item__title";
         const string CompanyValue = "vacancy-serp__vacancy-employer";
         const string MetroValue = "metro-station";
         const string SalaryValue = "vacancy-serp__vacancy-compensation";

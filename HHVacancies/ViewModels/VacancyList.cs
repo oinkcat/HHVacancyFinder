@@ -96,8 +96,8 @@ namespace HHVacancies.ViewModels
         /// Найдены какие-либо результаты
         /// </summary>
         public bool IsResultsFound => SearchComplete &&
-                                      FoundVacancies != null && 
-                                      FoundVacancies.Count() > 0;
+                                      (FoundVacancies != null) &&
+                                      (FoundVacancies.Count() > 0);
 
         /// <summary>
         /// Элементы управления активны
@@ -166,9 +166,9 @@ namespace HHVacancies.ViewModels
                 }
                 else
                 {
-                    return state == UIState.Error ? 
-                        "Произошла ошибка. Попробуйте повторить поиск позднее" : 
-                        "Готово. Ничего не найдено";
+                    return (state == UIState.Error)
+                        ? "Произошла ошибка. Попробуйте повторить поиск позднее" 
+                        : "Готово. Ничего не найдено";
                 }
             }
             else

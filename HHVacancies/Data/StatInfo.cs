@@ -55,10 +55,7 @@ namespace HHVacancies.Data
         /// </summary>
         /// <param name="obj">Информация по сравниваемой вакансии</param>
         /// <returns>Результат сравнения зарплат</returns>
-        public int CompareTo(object obj)
-        {
-            return Average.CompareTo((obj as StatInfo).Average);
-        }
+        public int CompareTo(object obj) => Average.CompareTo((obj as StatInfo).Average);
 
         /// <summary>
         /// Вычислить статистические показатели

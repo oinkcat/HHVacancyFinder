@@ -41,8 +41,8 @@ namespace HHVacancies.Data
         // Таймаут запросов
         private const int TimeoutInSeconds = 10;
 
-        // Максимальное число параллельных запросов
-        private const int MaxParallelRequests = 2;
+        // Минимальное число параллельных запросов
+        private const int MinParallelRequests = 2;
 
         private readonly VacancyParser parser;
 
@@ -105,10 +105,12 @@ namespace HHVacancies.Data
             string firstPageUrl = parser.GetResultsPageUrl(searchQuery);
             LoadAndParseVacancies(firstPageUrl);
 
+            int numParallelTasks = Math.Max(Environment.ProcessorCount / 2, MinParallelRequests);
+
             // Остальные страницы
             Parallel.ForEach (
                 parser.GetSearchResultsPages(searchQuery).Skip(1), 
-                new ParallelOptions {  MaxDegreeOfParallelism = MaxParallelRequests },
+                new ParallelOptions {  MaxDegreeOfParallelism = numParallelTasks },
                 (string pageUrl) =>
                 {
                     if(!stopToken.IsCancellationRequested)
@@ -122,7 +124,7 @@ namespace HHVacancies.Data
         // Загрузить страницу результатов поиска
         private HtmlDocument GetHtmlDocument(string url)
         {
-            var pageRequest = HttpWebRequest.CreateHttp(url);
+            var pageRequest = WebRequest.CreateHttp(url);
             pageRequest.Timeout = TimeoutInSeconds * 1000;
             pageRequest.ReadWriteTimeout = pageRequest.Timeout;
 
