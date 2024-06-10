@@ -199,12 +199,9 @@ namespace HHVacancies.ViewModels
         // Настроить действия команды поиска
         private void SetupFindCommand()
         {
-            Func<object, bool> canFindChecker = param =>
-            {
-                return SearchQuery?.Length > 0;
-            };
+            bool canFindChecker(object param) => SearchQuery?.Length > 0;
 
-            Action<object> findAction = async param =>
+            async void findAction(object param)
             {
                 FoundVacancies?.Clear();
                 SetUIState(UIState.Searching);
@@ -213,10 +210,9 @@ namespace HHVacancies.ViewModels
                 finder.ProgressChanged += (s, e) => SetProgress(e.Value, e.Maximum);
                 finder.ErrorOccurred += HandleError;
 
-                string encodedName = Uri.EscapeDataString(SearchQuery);
-                await finder.StartAsync(encodedName);
+                await finder.StartAsync(SearchQuery);
 
-                if(finder.CompletedSuccessfully)
+                if (finder.CompletedSuccessfully)
                 {
                     FoundVacancies = new ObservableCollection<Vacancy>(finder.Vacancies);
                 }
@@ -224,7 +220,7 @@ namespace HHVacancies.ViewModels
                 NotifyChanged(nameof(FoundVacancies));
 
                 SetUIState(finder.CompletedSuccessfully ? UIState.Ready : UIState.Error);
-            };
+            }
 
             SearchCommand = new DelegateCommand(canFindChecker, findAction);
         }

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
-using HHVacancies.Data;
 
 namespace HHVacancies.Data.Parsers
 {
@@ -25,6 +24,7 @@ namespace HHVacancies.Data.Parsers
 
         // Значения атрибутов элементов информации о вакансиях
         const string TitleValue = "serp-item__title";
+        const string TitleAndUrlValue = "serp-item__title-link-wrapper";
         const string CompanyValue = "vacancy-serp__vacancy-employer";
         const string MetroValue = "metro-station";
         const string SalaryValue = "vacancy-serp__vacancy-compensation";
@@ -45,7 +45,8 @@ namespace HHVacancies.Data.Parsers
         /// <returns>Ссылки на страницы результатов</returns>
         public override IEnumerable<string> GetSearchResultsPages(string query)
         {
-            return Enumerable.Range(0, TotalResultsPages)
+            return Enumerable
+                .Range(0, TotalResultsPages)
                 .Select(num => GetUrlForPage(query, num));
         }
 
@@ -105,6 +106,7 @@ namespace HHVacancies.Data.Parsers
         private int GetPagesCount(HtmlNode rootNode)
         {
             var pageLinks = rootNode.SelectNodes(PagerElem);
+
             // Если пагинатора на странице нет - результаты не найдены
             if (pageLinks == null || pageLinks.Count == 0)
                 return 0;
@@ -123,8 +125,7 @@ namespace HHVacancies.Data.Parsers
         private int GetAverageSalaryForItemNode(HtmlNode itemNode)
         {
             // Поиск узла информации о зарплате
-            var salaryNode = itemNode.Descendants("span")
-                .FirstOrDefault(n => n.Attributes["data-qa"]?.Value == SalaryValue);
+            var salaryNode = GetNodeByAttrVal(itemNode, "span", "data-qa", SalaryValue);
             if (salaryNode == null) { return 0; }
 
             // Считать значение зарплаты
@@ -162,7 +163,7 @@ namespace HHVacancies.Data.Parsers
         // Выдать наименование вакансии из элемента списка
         private string GetVacancyTitleForItemNode(HtmlNode itemNode)
         {
-            var titleNode = GetNodeByDataQa(itemNode.Descendants("a"), TitleValue);
+            var titleNode = GetNodeByAttrVal(itemNode, "span", "data-qa", TitleValue);
             string title = UnescapeHtmlEntities(titleNode.InnerText.Trim());
 
             return StripComments(title);
@@ -171,7 +172,8 @@ namespace HHVacancies.Data.Parsers
         // Выдать ссылку на страницу информации о вакансии из элемента списка
         private string GetVacancyUrlForItemNode(HtmlNode itemNode)
         {
-            string vacancyPageUrl = GetNodeByDataQa(itemNode.Descendants("a"), TitleValue)
+            string vacancyPageUrl = GetNodeByAttrVal(itemNode, "span", "class", TitleAndUrlValue)
+                .Element("a")
                 .Attributes["href"].Value;
 
             return vacancyPageUrl;
@@ -180,7 +182,7 @@ namespace HHVacancies.Data.Parsers
         // Выдать название компании из жлемента списка
         private string GetCompanyNameForItemNode(HtmlNode itemNode)
         {
-            var companyInfoNode = GetNodeByDataQa(itemNode.Descendants("a"), CompanyValue);
+            var companyInfoNode = GetNodeByAttrVal(itemNode, "a", "data-qa",CompanyValue);
             string companyName = UnescapeHtmlEntities(companyInfoNode?.InnerText ?? "?");
 
             return StripComments(companyName);
@@ -189,18 +191,24 @@ namespace HHVacancies.Data.Parsers
         // Выдать название станции метро из элемента списка
         private string GetMetroStationForItemNode(HtmlNode htmlNode)
         {
-            var metroSpan = htmlNode.Descendants("span")
+            var metroSpan = htmlNode
+                .Descendants("span")
                 .FirstOrDefault(n => n.Attributes["class"]?.Value == MetroValue);
-            string metroStation = metroSpan?.InnerText;
 
-            return metroStation;
+            return metroSpan?.InnerText;
         }
 
-        // Выдать первый совпадающий по аттрибуту data-qa элемент
-        private HtmlNode GetNodeByDataQa(IEnumerable<HtmlNode> nodes, string qaValue)
-        {
-            return nodes.FirstOrDefault(n => n.Attributes.Any(attr => {
-                return attr.Name == "data-qa" && attr.Value == qaValue;
+        // Выдать первый совпадающий по аттрибуту элемент
+        private HtmlNode GetNodeByAttrVal (
+            HtmlNode node, 
+            string tagName, 
+            string attrName, 
+            string attrValue
+        ) {
+            return node
+                .Descendants(tagName)
+                .FirstOrDefault(n => n.Attributes.Any(attr => {
+                return (attr.Name == attrName) && (attr.Value == attrValue);
             }));
         }
     }

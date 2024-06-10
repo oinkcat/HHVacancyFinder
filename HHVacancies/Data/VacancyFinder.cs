@@ -80,7 +80,7 @@ namespace HHVacancies.Data
             await Task.Factory.StartNew(() => {
                 try
                 {
-                    FindVacancies(searchQuery, stopSource.Token);
+                    FindVacancies(Uri.EscapeDataString(searchQuery), stopSource.Token);
                     CompletedSuccessfully = true;
                 }
                 catch(Exception e)
