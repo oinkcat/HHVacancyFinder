@@ -128,13 +128,20 @@ namespace HHVacancies.Data
             pageRequest.Timeout = TimeoutInSeconds * 1000;
             pageRequest.ReadWriteTimeout = pageRequest.Timeout;
 
-            var dataStream = pageRequest.GetResponse().GetResponseStream();
-            using (var reader = new StreamReader(dataStream, Encoding.UTF8))
+            try
             {
-                var resultsPageDocument = new HtmlDocument();
-                resultsPageDocument.LoadHtml(reader.ReadToEnd());
+                var dataStream = pageRequest.GetResponse().GetResponseStream();
+                using (var reader = new StreamReader(dataStream, Encoding.UTF8))
+                {
+                    var resultsPageDocument = new HtmlDocument();
+                    resultsPageDocument.LoadHtml(reader.ReadToEnd());
 
-                return resultsPageDocument;
+                    return resultsPageDocument;
+                }
+            }
+            catch(WebException)
+            {
+                return null;
             }
         }
 
@@ -142,14 +149,19 @@ namespace HHVacancies.Data
         private void LoadAndParseVacancies(string resultsUrl)
         {
             // Найти вакансии на странице
-            var vacanciesOnPage = parser.ParsePage(GetHtmlDocument(resultsUrl));
-            Vacancies.AddRange(vacanciesOnPage);
+            var loadedPageDocument = GetHtmlDocument(resultsUrl);
 
-            // Выдать прогресс поиска
-            int pageNum = Interlocked.Increment(ref currentPageNumber);
-            int totalPages = parser.TotalResultsPages;
-            var progressArgs = new FindProgressEventArgs(pageNum, totalPages);
-            ProgressChanged?.Invoke(this, progressArgs);
+            if(loadedPageDocument != null)
+            {
+                var vacanciesOnPage = parser.ParsePage(loadedPageDocument);
+                Vacancies.AddRange(vacanciesOnPage);
+
+                // Выдать прогресс поиска
+                int pageNum = Interlocked.Increment(ref currentPageNumber);
+                int totalPages = parser.TotalResultsPages;
+                var progressArgs = new FindProgressEventArgs(pageNum, totalPages);
+                ProgressChanged?.Invoke(this, progressArgs);
+            }
         }
 
         public VacancyFinder()

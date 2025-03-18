@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using HtmlAgilityPack;
 
 namespace HHVacancies.Data.Parsers
@@ -19,15 +18,14 @@ namespace HHVacancies.Data.Parsers
         const string QueryParams = "currency_code=RUR&only_with_salary=true&area=1";
 
         // Пути XPath к нужным элементам страницы
-        const string PagerElem = "//*/*[@data-qa='pager-page']";
-        const string ItemElem = "//*/div[contains(@data-qa, 'vacancy-serp__vacancy')]";
+        const string TitleElem = "//*/h1[@data-qa='title']";
+        const string ItemElem = "//*/div[contains(@data-qa, 'vacancy-serp__vacancy ')]";
+        const string SalaryElem = "descendant::div[contains(@class, 'compensation-labels')]/span";
 
         // Значения атрибутов элементов информации о вакансиях
         const string TitleValue = "serp-item__title";
-        const string TitleAndUrlValue = "serp-item__title-link-wrapper";
         const string CompanyValue = "vacancy-serp__vacancy-employer";
         const string MetroValue = "metro-station";
-        const string SalaryValue = "vacancy-serp__vacancy-compensation";
 
         /// <summary>
         /// Выдать ссылку для поиска вакансий
@@ -105,14 +103,23 @@ namespace HHVacancies.Data.Parsers
         // Выдать число найденных страниц для узла страницы
         private int GetPagesCount(HtmlNode rootNode)
         {
-            var pageLinks = rootNode.SelectNodes(PagerElem);
+            var titleElem = rootNode.SelectSingleNode(TitleElem);
 
-            // Если пагинатора на странице нет - результаты не найдены
-            if (pageLinks == null || pageLinks.Count == 0)
-                return 0;
+            var numFoundChars = titleElem.FirstChild.InnerText.ToCharArray()
+                .Where(Char.IsNumber)
+                .ToArray();
 
-            // Номера страниц начинаются с нуля
-            return int.Parse(pageLinks.Last().InnerText) - 1;
+            if (int.TryParse(new string(numFoundChars), out int numFound))
+            {
+                int numVacancyNodes = rootNode.SelectNodes(ItemElem).Count;
+
+                if(numVacancyNodes > 0)
+                {
+                    return (int)Math.Ceiling((double)numFound / numVacancyNodes);
+                }
+            }
+            
+            return 0;
         }
 
         // Выдать узлы элементов списка вакансий
@@ -125,7 +132,7 @@ namespace HHVacancies.Data.Parsers
         private int GetAverageSalaryForItemNode(HtmlNode itemNode)
         {
             // Поиск узла информации о зарплате
-            var salaryNode = GetNodeByAttrVal(itemNode, "span", "data-qa", SalaryValue);
+            var salaryNode = itemNode.SelectSingleNode(SalaryElem);
             if (salaryNode == null) { return 0; }
 
             // Считать значение зарплаты
@@ -163,20 +170,10 @@ namespace HHVacancies.Data.Parsers
         // Выдать наименование вакансии из элемента списка
         private string GetVacancyTitleForItemNode(HtmlNode itemNode)
         {
-            var titleNode = GetNodeByAttrVal(itemNode, "span", "data-qa", TitleValue);
+            var titleNode = GetNodeByAttrVal(itemNode, "a", "data-qa", TitleValue);
             string title = UnescapeHtmlEntities(titleNode.InnerText.Trim());
 
             return StripComments(title);
-        }
-
-        // Выдать ссылку на страницу информации о вакансии из элемента списка
-        private string GetVacancyUrlForItemNode(HtmlNode itemNode)
-        {
-            string vacancyPageUrl = GetNodeByAttrVal(itemNode, "span", "class", TitleAndUrlValue)
-                .Element("a")
-                .Attributes["href"].Value;
-
-            return vacancyPageUrl;
         }
 
         // Выдать название компании из жлемента списка
@@ -186,6 +183,16 @@ namespace HHVacancies.Data.Parsers
             string companyName = UnescapeHtmlEntities(companyInfoNode?.InnerText ?? "?");
 
             return StripComments(companyName);
+        }
+
+        // Выдать ссылку на страницу информации о вакансии из элемента списка
+        private string GetVacancyUrlForItemNode(HtmlNode itemNode)
+        {
+            string vacancyPageUrl = GetNodeByAttrVal(itemNode, "a", "data-qa", TitleValue)
+                .Attributes["href"]
+                .Value;
+
+            return vacancyPageUrl;
         }
 
         // Выдать название станции метро из элемента списка
