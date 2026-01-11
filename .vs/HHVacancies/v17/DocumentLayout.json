@@ -3,20 +3,16 @@
   "WorkspaceRootPath": "R:\\VS_Projects\\Personal\\HHVacancies\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{DE07FFAF-6AB9-430B-B17B-083E47222F24}|HHVacancies\\HHVacancies.csproj|r:\\vs_projects\\personal\\hhvacancies\\hhvacancies\\data\\parsers\\headhunterparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DE07FFAF-6AB9-430B-B17B-083E47222F24}|HHVacancies\\HHVacancies.csproj|solutionrelative:hhvacancies\\data\\parsers\\headhunterparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{3F46CA7F-14E3-424C-9491-C50EC3187E16}|Solution Items{3F46CA7F-14E3-424C-9491-C50EC3187E16}|D:\\Projects_VS\\repos\\HHVacancyFinder\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{3F46CA7F-14E3-424C-9491-C50EC3187E16}|Solution Items{3F46CA7F-14E3-424C-9491-C50EC3187E16}|solutionrelative:.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{DE07FFAF-6AB9-430B-B17B-083E47222F24}|HHVacancies\\HHVacancies.csproj|R:\\VS_Projects\\Personal\\HHVacancies\\hhvacancies\\data\\parsers\\vacancyparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{DE07FFAF-6AB9-430B-B17B-083E47222F24}|HHVacancies\\HHVacancies.csproj|solutionrelative:hhvacancies\\data\\parsers\\vacancyparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{DE07FFAF-6AB9-430B-B17B-083E47222F24}|HHVacancies\\HHVacancies.csproj|R:\\VS_Projects\\Personal\\HHVacancies\\hhvacancies\\viewmodels\\vacancylist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DE07FFAF-6AB9-430B-B17B-083E47222F24}|HHVacancies\\HHVacancies.csproj|solutionrelative:hhvacancies\\viewmodels\\vacancylist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DE07FFAF-6AB9-430B-B17B-083E47222F24}|HHVacancies\\HHVacancies.csproj|R:\\VS_Projects\\Personal\\HHVacancies\\hhvacancies\\data\\vacancyfinder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DE07FFAF-6AB9-430B-B17B-083E47222F24}|HHVacancies\\HHVacancies.csproj|solutionrelative:hhvacancies\\data\\vacancyfinder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{3CD5180E-4202-4F65-B66B-E482DE033726}|HHVacancies.Tests\\HHVacancies.Tests.csproj|d:\\projects_vs\\repos\\hhvacancyfinder\\hhvacancies.tests\\vacancyfindertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3CD5180E-4202-4F65-B66B-E482DE033726}|HHVacancies.Tests\\HHVacancies.Tests.csproj|solutionrelative:hhvacancies.tests\\vacancyfindertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,7 +22,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Bookmark",
@@ -61,6 +57,39 @@
               "Name": "ST:132:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{0174dea2-fdbe-4ef1-8f99-c0beae78880f}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1516350145:0:{bf84ea66-d821-4dba-b1b1-2777d8574775}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:499740339:0:{bf84ea66-d821-4dba-b1b1-2777d8574775}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1709101235:0:{bf84ea66-d821-4dba-b1b1-2777d8574775}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": ".gitignore",
+              "DocumentMoniker": "D:\\Projects_VS\\repos\\HHVacancyFinder\\.gitignore",
+              "RelativeDocumentMoniker": ".gitignore",
+              "ToolTip": "D:\\Projects_VS\\repos\\HHVacancyFinder\\.gitignore",
+              "RelativeToolTip": ".gitignore",
+              "ViewState": "AgIAAKoAAAAAAAAAAAAAAMEAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-01-11T09:53:51.051Z",
+              "EditorCaption": ""
+            },
+            {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "HeadHunterParser.cs",
@@ -68,46 +97,36 @@
               "RelativeDocumentMoniker": "HHVacancies\\Data\\Parsers\\HeadHunterParser.cs",
               "ToolTip": "R:\\VS_Projects\\Personal\\HHVacancies\\HHVacancies\\Data\\Parsers\\HeadHunterParser.cs",
               "RelativeToolTip": "HHVacancies\\Data\\Parsers\\HeadHunterParser.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAABSAAAAAAAAAA==",
+              "ViewState": "AgIAAHgAAAAAAAAAAAAiwIUAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-10T10:59:40.14Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "VacancyParser.cs",
-              "DocumentMoniker": "R:\\VS_Projects\\Personal\\HHVacancies\\HHVacancies\\Data\\Parsers\\VacancyParser.cs",
-              "RelativeDocumentMoniker": "HHVacancies\\Data\\Parsers\\VacancyParser.cs",
-              "ToolTip": "R:\\VS_Projects\\Personal\\HHVacancies\\HHVacancies\\Data\\Parsers\\VacancyParser.cs",
-              "RelativeToolTip": "HHVacancies\\Data\\Parsers\\VacancyParser.cs",
-              "ViewState": "AQIAACoAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-10T10:59:34.475Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "VacancyFinder.cs",
               "DocumentMoniker": "R:\\VS_Projects\\Personal\\HHVacancies\\HHVacancies\\Data\\VacancyFinder.cs",
               "RelativeDocumentMoniker": "HHVacancies\\Data\\VacancyFinder.cs",
               "ToolTip": "R:\\VS_Projects\\Personal\\HHVacancies\\HHVacancies\\Data\\VacancyFinder.cs",
               "RelativeToolTip": "HHVacancies\\Data\\VacancyFinder.cs",
-              "ViewState": "AQIAADkAAAAAAAAAAAAAAFIAAABXAAAA",
+              "ViewState": "AgIAAFoAAAAAAAAAAAAnwIgAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-10T10:57:23.116Z"
+              "WhenOpened": "2025-03-18T10:30:08.504Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "VacancyList.cs",
-              "DocumentMoniker": "R:\\VS_Projects\\Personal\\HHVacancies\\HHVacancies\\ViewModels\\VacancyList.cs",
-              "RelativeDocumentMoniker": "HHVacancies\\ViewModels\\VacancyList.cs",
-              "ToolTip": "R:\\VS_Projects\\Personal\\HHVacancies\\HHVacancies\\ViewModels\\VacancyList.cs",
-              "RelativeToolTip": "HHVacancies\\ViewModels\\VacancyList.cs",
-              "ViewState": "AQIAAAIBAAAAAAAAAAAAANQAAAAhAAAA",
+              "Title": "VacancyFinderTests.cs",
+              "DocumentMoniker": "D:\\Projects_VS\\repos\\HHVacancyFinder\\HHVacancies.Tests\\VacancyFinderTests.cs",
+              "RelativeDocumentMoniker": "HHVacancies.Tests\\VacancyFinderTests.cs",
+              "ToolTip": "D:\\Projects_VS\\repos\\HHVacancyFinder\\HHVacancies.Tests\\VacancyFinderTests.cs",
+              "RelativeToolTip": "HHVacancies.Tests\\VacancyFinderTests.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-09-26T10:46:17.122Z"
+              "WhenOpened": "2025-03-18T10:41:55.448Z",
+              "EditorCaption": ""
             }
           ]
         }

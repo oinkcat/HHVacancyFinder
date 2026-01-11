@@ -3,20 +3,12 @@
   "WorkspaceRootPath": "R:\\VS_Projects\\Personal\\HHVacancies\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{DE07FFAF-6AB9-430B-B17B-083E47222F24}|HHVacancies\\HHVacancies.csproj|r:\\vs_projects\\personal\\hhvacancies\\hhvacancies\\data\\parsers\\headhunterparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DE07FFAF-6AB9-430B-B17B-083E47222F24}|HHVacancies\\HHVacancies.csproj|solutionrelative:hhvacancies\\data\\parsers\\headhunterparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DE07FFAF-6AB9-430B-B17B-083E47222F24}|HHVacancies\\HHVacancies.csproj|R:\\VS_Projects\\Personal\\HHVacancies\\hhvacancies\\data\\parsers\\vacancyparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DE07FFAF-6AB9-430B-B17B-083E47222F24}|HHVacancies\\HHVacancies.csproj|solutionrelative:hhvacancies\\data\\parsers\\vacancyparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DE07FFAF-6AB9-430B-B17B-083E47222F24}|HHVacancies\\HHVacancies.csproj|R:\\VS_Projects\\Personal\\HHVacancies\\hhvacancies\\viewmodels\\vacancylist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DE07FFAF-6AB9-430B-B17B-083E47222F24}|HHVacancies\\HHVacancies.csproj|solutionrelative:hhvacancies\\viewmodels\\vacancylist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DE07FFAF-6AB9-430B-B17B-083E47222F24}|HHVacancies\\HHVacancies.csproj|R:\\VS_Projects\\Personal\\HHVacancies\\hhvacancies\\data\\vacancyfinder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{DE07FFAF-6AB9-430B-B17B-083E47222F24}|HHVacancies\\HHVacancies.csproj|D:\\Projects_VS\\repos\\HHVacancyFinder\\hhvacancies\\data\\vacancyfinder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{DE07FFAF-6AB9-430B-B17B-083E47222F24}|HHVacancies\\HHVacancies.csproj|solutionrelative:hhvacancies\\data\\vacancyfinder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3CD5180E-4202-4F65-B66B-E482DE033726}|HHVacancies.Tests\\HHVacancies.Tests.csproj|d:\\projects_vs\\repos\\hhvacancyfinder\\hhvacancies.tests\\vacancyfindertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3CD5180E-4202-4F65-B66B-E482DE033726}|HHVacancies.Tests\\HHVacancies.Tests.csproj|solutionrelative:hhvacancies.tests\\vacancyfindertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -62,13 +54,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "HeadHunterParser.cs",
               "DocumentMoniker": "R:\\VS_Projects\\Personal\\HHVacancies\\HHVacancies\\Data\\Parsers\\HeadHunterParser.cs",
               "RelativeDocumentMoniker": "HHVacancies\\Data\\Parsers\\HeadHunterParser.cs",
               "ToolTip": "R:\\VS_Projects\\Personal\\HHVacancies\\HHVacancies\\Data\\Parsers\\HeadHunterParser.cs",
               "RelativeToolTip": "HHVacancies\\Data\\Parsers\\HeadHunterParser.cs",
-              "ViewState": "AgIAABoAAAAAAAAAAAAQwDUAAAAQAAAAAAAAAA==",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAAABYAAAAvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-10T10:59:40.14Z",
               "EditorCaption": ""
@@ -76,24 +68,12 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "VacancyParser.cs",
-              "DocumentMoniker": "R:\\VS_Projects\\Personal\\HHVacancies\\HHVacancies\\Data\\Parsers\\VacancyParser.cs",
-              "RelativeDocumentMoniker": "HHVacancies\\Data\\Parsers\\VacancyParser.cs",
-              "ToolTip": "R:\\VS_Projects\\Personal\\HHVacancies\\HHVacancies\\Data\\Parsers\\VacancyParser.cs",
-              "RelativeToolTip": "HHVacancies\\Data\\Parsers\\VacancyParser.cs",
-              "ViewState": "AQIAACoAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-10T10:59:34.475Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
               "Title": "VacancyFinder.cs",
               "DocumentMoniker": "R:\\VS_Projects\\Personal\\HHVacancies\\HHVacancies\\Data\\VacancyFinder.cs",
               "RelativeDocumentMoniker": "HHVacancies\\Data\\VacancyFinder.cs",
               "ToolTip": "R:\\VS_Projects\\Personal\\HHVacancies\\HHVacancies\\Data\\VacancyFinder.cs",
               "RelativeToolTip": "HHVacancies\\Data\\VacancyFinder.cs",
-              "ViewState": "AQIAADkAAAAAAAAAAAAAAFIAAABXAAAA",
+              "ViewState": "AgIAAIcAAAAAAAAAAAAnwIgAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-10T10:57:23.116Z"
             },
