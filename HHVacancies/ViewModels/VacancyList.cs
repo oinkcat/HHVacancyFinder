@@ -9,6 +9,7 @@ using HHVacancies.Data;
 using HHVacancies.Exporters;
 using System.Windows;
 using System.Windows.Threading;
+using System.Windows.Data;
 
 namespace HHVacancies.ViewModels
 {
@@ -22,6 +23,15 @@ namespace HHVacancies.ViewModels
         {
             Ready, Searching, Error
         }
+
+        // Сопоставление столбцов таблицы с именами свойств для сортировки
+        private static readonly Dictionary<string, string> sortColMap = new Dictionary<string, string>()
+        {
+            ["Должность"] = nameof(Vacancy.Name),
+            ["Организация"] = nameof(Vacancy.Company),
+            ["Метро"] = nameof(Vacancy.MetroStation),
+            ["Зарплата"] = nameof(Vacancy.BaseSalary)
+        };
 
         // Запрос поиска
         private string searchQueryText;
@@ -61,6 +71,11 @@ namespace HHVacancies.ViewModels
         /// Команда остановки процесса поиска
         /// </summary>
         public DelegateCommand StopSearchCommand { get; set; }
+
+        /// <summary>
+        /// Команда изменения порядка сортировки
+        /// </summary>
+        public DelegateCommand ChangeSortOrderCommand { get; set; }
 
         /// <summary>
         /// Свойство модели представления изменено
@@ -285,6 +300,22 @@ namespace HHVacancies.ViewModels
             StopSearchCommand = new DelegateCommand(_ => finder.Stop());
         }
 
+        // Настройка команды изменения порядка сортировки
+        private void SetupChangeSortOrderCommand()
+        {
+            ChangeSortOrderCommand = new DelegateCommand(colName =>
+            {
+                if(FoundVacancies != null)
+                {
+                    var sortBy = CollectionViewSource.GetDefaultView(FoundVacancies).SortDescriptions;
+                    sortBy.Clear();
+
+                    string sortPropName = sortColMap[colName as string];
+                    sortBy.Add(new SortDescription(sortPropName, ListSortDirection.Ascending));
+                }
+            });
+        }
+
         public VacancyList()
         {
             Searching = false;
@@ -296,6 +327,7 @@ namespace HHVacancies.ViewModels
             SetupOpenInBrowserCommand();
             SetupAddToComparsionCommand();
             SetupStopSearchCommand();
+            SetupChangeSortOrderCommand();
         }
     }
 }

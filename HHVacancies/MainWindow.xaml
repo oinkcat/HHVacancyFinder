@@ -54,14 +54,31 @@
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseDoubleClick">
                             <i:InvokeCommandAction Command="{Binding OpenInBrowserCommand}" 
-                                                   CommandParameter="{Binding SelectedItem, 
-                                                                      RelativeSource={RelativeSource Mode=FindAncestor, 
-                                                                                        AncestorType=ListView}}" />
+                                                   CommandParameter="{Binding
+                                                                        Path=SelectedItem, 
+                                                                        RelativeSource={RelativeSource
+                                                                            Mode=FindAncestor, 
+                                                                            AncestorType=ListView}}" />
                         </i:EventTrigger>                        
                     </i:Interaction.Triggers>
                     
                     <ListView.View>
                         <GridView>
+                            <GridView.ColumnHeaderTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="MouseDown">
+                                                <i:InvokeCommandAction 
+                                                    Command="{Binding ChangeSortOrderCommand, Source={StaticResource listVm}}"
+                                                    CommandParameter="{Binding}" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                        <Label Content="{Binding}" Margin="5,0" />
+                                    </Grid>
+                                </DataTemplate>
+                            </GridView.ColumnHeaderTemplate>
+                            
                             <GridViewColumn Header="Должность" Width="300" DisplayMemberBinding="{Binding Name}" />
                             <GridViewColumn Header="Организация" Width="250" DisplayMemberBinding="{Binding Company}" />
                             <GridViewColumn Header="Метро" Width="120" DisplayMemberBinding="{Binding MetroStation}" />
@@ -128,6 +145,14 @@
                           ItemsSource="{Binding Source={StaticResource comparsionList}}">
                     <ListView.View>
                         <GridView>
+                            <GridView.ColumnHeaderTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Label Content="{Binding}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </GridView.ColumnHeaderTemplate>
+                            
                             <GridViewColumn Header="Поисковый запрос" Width="265" DisplayMemberBinding="{Binding Title }" />
                             <GridViewColumn Header="Кол-во" Width="60" 
                                             DisplayMemberBinding="{Binding Count}" />

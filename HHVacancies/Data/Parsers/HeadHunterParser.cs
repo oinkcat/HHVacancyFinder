@@ -155,7 +155,7 @@ namespace HHVacancies.Data.Parsers
                         valuesCount++;
                     }
                 }
-                else if (c >= 'A' && c <= 'Z')
+                else if (c >= 'A' && c <= 'Z' || c == '$')
                 {
                     // Иностранная валюта не рассматривается
                     return 0;
