@@ -20,7 +20,7 @@ namespace HHVacancies.Data.Parsers
         // Пути XPath к нужным элементам страницы
         const string TitleElem = "//*/h1[@data-qa='title']";
         const string ItemElem = "//*/div[contains(@data-qa, 'vacancy-serp__vacancy')]";
-        const string SalaryElem = "descendant::div[contains(@class, 'compensation-labels')]/span";
+        const string SalaryElem = "descendant::span[contains(text(), '000')]";
 
         // Значения атрибутов элементов информации о вакансиях
         const string TitleValue = "serp-item__title";
